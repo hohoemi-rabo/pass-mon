@@ -169,6 +169,29 @@ npx expo install @supabase/supabase-js @react-native-async-storage/async-storage
 - FlatList の `keyExtractor`, `getItemLayout` を適切に設定してリスト性能を確保
 - `newArchEnabled: true`（有効化済み）で新アーキテクチャの恩恵を受ける
 
+## チケット管理（docs/）
+
+開発タスクは `docs/` 配下のチケットファイルで管理する。各チケット内のタスクは以下のルールで運用する:
+
+- 未着手: `- [ ]`
+- 完了: `- [x]`
+- タスクが完了したら即座に `- [ ]` を `- [x]` に更新すること
+- チケット内の全タスクが完了したら、ファイル先頭の `# XX:` の後に `[DONE]` を付与する
+
+### チケット一覧
+
+| # | ファイル | 内容 | Phase |
+|---|---------|------|-------|
+| 01 | [環境構築](docs/01-environment-setup.md) | NativeWind, Supabase クライアント, EAS Build 設定 | 1 |
+| 02 | [DB 設計](docs/02-database-setup.md) | テーブル, RLS, 暗号化関数 | 1 |
+| 03 | [テーマ・UI 基盤](docs/03-theme-ui-foundation.md) | カラーパレット, コンポーネント, アクセシビリティ | 1 |
+| 04 | [認証 (F1)](docs/04-auth-google-oauth.md) | Google OAuth, セッション管理, ログイン画面 | 1 |
+| 05 | [CRUD (F2)](docs/05-credential-crud.md) | 登録・表示・編集・削除, 暗号化, コピー | 2 |
+| 06 | [一覧・検索 (F3)](docs/06-credential-list.md) | カードリスト, 検索, FAB | 2 |
+| 07 | [家族共有 (F4)](docs/07-family-sharing.md) | 招待リンク, 閲覧専用, 共有解除 | 3 |
+| 08 | [ナビゲーション](docs/08-navigation-layout.md) | ルーティング構成, タブ, 設定画面 | 2 |
+| 09 | [ビルド・配布](docs/09-build-distribution.md) | APK 生成, 配布, テスト, 手順書 | 4 |
+
 ## 現在の状態
 
 Expoテンプレートのスキャフォールディング段階。認証・CRUD・暗号化などのコア機能は未実装。
