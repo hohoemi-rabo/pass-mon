@@ -10,51 +10,55 @@ paths:
 
 ## 認証と保護ルート
 
-Expo Router の `Stack.Protected` を使い、認証状態に応じてルートグループを切り替える。リダイレクト処理は不要で、`guard` の値が変わると自動的にナビゲーションが切り替わる。
+認証状態は `AuthContext` で一元管理。`_layout.tsx` で `useAuthProvider()` を呼び、Provider で子に共有する。各画面では `useAuth()` で Context から読み取り、未認証時は `<Redirect>` でガードする。
 
 ```tsx
 // app/_layout.tsx
-import { Stack } from 'expo-router';
+import { AuthContext, useAuthProvider } from '@/hooks/useAuth';
 
 export default function RootLayout() {
-  const { isLoggedIn } = useAuthState();
-
+  const auth = useAuthProvider();
+  if (auth.isLoading) return <LoadingSpinner />;
   return (
-    <Stack>
-      <Stack.Protected guard={isLoggedIn}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="modal" />
-      </Stack.Protected>
-      <Stack.Protected guard={!isLoggedIn}>
-        <Stack.Screen name="sign-in" />
-      </Stack.Protected>
-    </Stack>
+    <AuthContext.Provider value={auth}>
+      <Slot />
+    </AuthContext.Provider>
   );
 }
+
+// app/index.tsx（認証必須画面）
+const { isLoggedIn } = useAuth();
+if (!isLoggedIn) return <Redirect href="/sign-in" />;
+
+// app/sign-in.tsx（未認証専用画面）
+const { isLoggedIn } = useAuth();
+if (isLoggedIn) return <Redirect href="/" />;
 ```
+
+**注意:** `useAuth()` の独立インスタンスを各画面で作ると、初期化タイミングのズレでリダイレクトループが発生する。必ず Context 経由で共有すること。
 
 ## セッション管理・セキュアストレージ
 
 - ネイティブ: `expo-secure-store` でトークンを安全に保存
-- Web: `localStorage` にフォールバック
-- `Platform.OS` で分岐するカスタムフック `useStorageState` パターンを採用
+- Web: `localStorage` にフォールバック（SSR時は `typeof localStorage` チェック必須）
+- `lib/supabase.ts` の `SecureStoreAdapter` で `Platform.OS` 分岐
+
+## Google OAuth フロー
+
+- Web: `signInWithOAuth` でページリダイレクト（ポップアップはCOOPでブロックされる）
+- ネイティブ: `WebBrowser.openAuthSessionAsync` でアプリ内ブラウザ
+- Web リダイレクト後のハッシュ処理は `useAuthProvider` 内の `handleWebOAuthRedirect` で実行
 
 ## Supabase 連携
 
-```bash
-# 必要なパッケージ
-npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-url-polyfill
-```
-
-- Supabaseクライアント初期化時に `AsyncStorage` をストレージアダプタとして渡す
+- Supabaseクライアントは `expo-secure-store` をストレージアダプタとして使用（AsyncStorage ではない）
 - `EXPO_PUBLIC_` プレフィックスの環境変数でSupabase URLとAnon Keyを管理
-- 秘密情報（暗号化キー等）はクライアントに含めず、EAS SecretsまたはSupabase環境変数で管理
+- 秘密情報（暗号化キー等）はクライアントに含めず、Supabase Vault で管理
 
 ## コード品質
 
 - `npx expo lint` でExpo最適化済みESLint設定を利用
-- `npx expo lint --fix` で自動修正
-- `experiments.reactCompiler: true`（app.json で有効化済み）により、不要な `useMemo`/`useCallback` を排除可能
+- `experiments.reactCompiler: true`（有効化済み）により、不要な `useMemo`/`useCallback` を排除可能
 - `experiments.typedRoutes: true`（有効化済み）で型安全なルーティング
 
 ## パフォーマンス

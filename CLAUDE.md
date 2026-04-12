@@ -62,6 +62,15 @@ eas build --platform android --profile preview  # APKビルド
 | `eas-build.md` | EAS Build設定, 配布 | `eas.json`, `app.json`, `app.config.*` |
 | `ticket-management.md` | チケットTODO管理ルール | `docs/` |
 
+## 認証アーキテクチャ
+
+- `hooks/useAuth.ts` に `AuthContext` + `useAuthProvider` + `useAuth` を定義
+- `_layout.tsx` で `useAuthProvider()` → `AuthContext.Provider` で全画面に共有
+- 各画面は `useAuth()` で Context から認証状態を取得（独立インスタンスは作らない）
+- 認証ガードは各画面で `<Redirect>` を使用（`Stack.Protected` は不使用）
+- Web: ページリダイレクト方式（ポップアップはCOOPでブロックされるため）
+- ネイティブ: `WebBrowser.openAuthSessionAsync` でアプリ内ブラウザ方式
+
 ## 現在の状態
 
-環境構築完了（チケット01）。NativeWind, Supabase クライアント, EAS Build 設定済み。認証・CRUD・暗号化などのコア機能は未実装。
+Phase 1 完了（チケット01〜04）。環境構築、DB設計、テーマ・UI基盤、Google OAuth認証が実装済み。CRUD・一覧検索・ナビゲーション等のPhase 2機能は未実装。
