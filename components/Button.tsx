@@ -1,6 +1,7 @@
-import { Pressable, Text } from "react-native";
+import { useState } from "react";
+import { Pressable, Text, View } from "react-native";
 import type { PressableProps } from "react-native";
-import { Colors } from "@/constants/theme";
+import { Colors, FontFamily } from "@/constants/theme";
 
 type ButtonVariant = "primary" | "secondary" | "danger";
 
@@ -9,14 +10,51 @@ interface ButtonProps extends Omit<PressableProps, "children"> {
   variant?: ButtonVariant;
 }
 
-const variantColors: Record<
-  ButtonVariant,
-  { base: string; pressed: string }
-> = {
-  primary: { base: Colors.primary, pressed: Colors.primaryDark },
-  secondary: { base: Colors.secondary, pressed: Colors.secondaryDark },
-  danger: { base: Colors.danger, pressed: Colors.dangerDark },
-};
+function getButtonStyles(
+  variant: ButtonVariant,
+  disabled: boolean,
+  pressed: boolean,
+) {
+  if (disabled) {
+    return {
+      container: {
+        backgroundColor: Colors.border,
+        opacity: 0.5,
+      },
+      text: { color: Colors.subtext },
+    };
+  }
+
+  switch (variant) {
+    case "primary":
+      return {
+        container: {
+          backgroundColor: pressed ? Colors.primaryDark : Colors.primary,
+        },
+        text: { color: "#1A1A2E" },
+      };
+    case "secondary":
+      return {
+        container: {
+          backgroundColor: pressed ? "rgba(255,255,255,0.08)" : "transparent",
+          borderWidth: 1.5,
+          borderColor: Colors.primary,
+        },
+        text: { color: Colors.primary },
+      };
+    case "danger":
+      return {
+        container: {
+          backgroundColor: pressed
+            ? Colors.dangerDark
+            : "rgba(255,107,107,0.15)",
+          borderWidth: 1.5,
+          borderColor: Colors.danger,
+        },
+        text: { color: Colors.danger },
+      };
+  }
+}
 
 export function Button({
   title,
@@ -24,29 +62,39 @@ export function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const colors = variantColors[variant];
+  const [pressed, setPressed] = useState(false);
+  const styles = getButtonStyles(variant, !!disabled, pressed);
 
   return (
     <Pressable
-      className="min-h-[52px] items-center justify-center rounded-button px-6"
-      style={({ pressed }) => ({
-        backgroundColor: disabled
-          ? Colors.inputBorder
-          : pressed
-            ? colors.pressed
-            : colors.base,
-        opacity: disabled ? 0.6 : 1,
-      })}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
       disabled={disabled}
       accessibilityRole="button"
       accessibilityState={{ disabled: !!disabled }}
       {...props}
     >
-      <Text
-        className={`text-subtitle font-bold ${disabled ? "text-subtext" : "text-text"}`}
+      <View
+        style={[
+          {
+            minHeight: 52,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 12,
+            paddingHorizontal: 24,
+          },
+          styles.container,
+        ]}
       >
-        {title}
-      </Text>
+        <Text
+          style={[
+            { fontSize: 20, lineHeight: 30, fontFamily: FontFamily.medium },
+            styles.text,
+          ]}
+        >
+          {title}
+        </Text>
+      </View>
     </Pressable>
   );
 }

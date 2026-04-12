@@ -134,7 +134,14 @@ export default function Index() {
       />
 
       {loadError ? (
-        <View className="absolute bottom-24 left-4 right-4 rounded-button bg-danger/10 p-3">
+        <View
+          className="absolute bottom-24 left-4 right-4 rounded-button p-3"
+          style={{
+            backgroundColor: "rgba(255,107,107,0.12)",
+            borderWidth: 1,
+            borderColor: "rgba(255,107,107,0.25)",
+          }}
+        >
           <Text className="text-center text-body text-danger">{loadError}</Text>
         </View>
       ) : null}
@@ -142,16 +149,23 @@ export default function Index() {
       {/* FAB */}
       <Pressable
         onPress={() => router.push("/add")}
-        className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full"
-        style={({ pressed }) => ({
-          backgroundColor: pressed ? Colors.primaryDark : Colors.primary,
-          elevation: 4,
-          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.25)",
-        })}
+        style={{
+          position: "absolute",
+          bottom: 24,
+          right: 24,
+          height: 64,
+          width: 64,
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 32,
+          backgroundColor: Colors.primary,
+          elevation: 6,
+          boxShadow: "0px 4px 12px rgba(212,160,86,0.4)",
+        }}
         accessibilityRole="button"
         accessibilityLabel="新規登録"
       >
-        <Ionicons name="add" size={32} color={Colors.text} />
+        <Ionicons name="add" size={32} color="#1A1A2E" />
       </Pressable>
     </View>
   );
@@ -169,9 +183,9 @@ function EmptyState({
       <Ionicons
         name={hasCredentials ? "search" : "key-outline"}
         size={64}
-        color={Colors.inputBorder}
+        color={Colors.border}
       />
-      <Text className="mt-4 text-center text-title font-bold text-text">
+      <Text className="mt-4 text-center text-title font-semibold text-text">
         {hasCredentials ? "見つかりません" : "アカウント未登録"}
       </Text>
       <Text className="mt-2 text-center text-body text-subtext">
@@ -194,7 +208,7 @@ function SharedSection({
     <View className="mt-6 gap-3">
       <View className="flex-row items-center gap-2">
         <Ionicons name="people" size={22} color={Colors.secondary} />
-        <Text className="text-subtitle font-bold text-text">
+        <Text className="text-subtitle font-semibold text-text">
           家族の共有データ
         </Text>
       </View>

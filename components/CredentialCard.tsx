@@ -24,7 +24,7 @@ export function CredentialCard({
       <Card>
         <View className="flex-row items-center">
           <View className="flex-1 gap-1">
-            <Text className="text-subtitle font-bold text-text">
+            <Text className="text-subtitle font-semibold text-text">
               {serviceName}
             </Text>
             <Text className="text-body text-subtext">
@@ -34,7 +34,7 @@ export function CredentialCard({
           <Ionicons
             name="chevron-forward"
             size={24}
-            color={Colors.subtext}
+            color={Colors.primary}
           />
         </View>
       </Card>

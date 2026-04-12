@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button } from "@/components/Button";
 import { signInWithGoogle } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
+import { Colors } from "@/constants/theme";
 
 export default function SignIn() {
   const { isLoggedIn } = useAuth();
@@ -34,17 +35,36 @@ export default function SignIn() {
   return (
     <View className="flex-1 items-center justify-center bg-background px-8">
       <View className="mb-12 items-center">
-        <View className="mb-4 h-24 w-24 items-center justify-center rounded-full bg-primary">
-          <Ionicons name="key" size={48} color="#333333" />
+        <View
+          className="mb-6 h-28 w-28 items-center justify-center rounded-full"
+          style={{
+            backgroundColor: "rgba(212,160,86,0.15)",
+            borderWidth: 1.5,
+            borderColor: "rgba(212,160,86,0.3)",
+          }}
+        >
+          <Ionicons name="key" size={48} color={Colors.primary} />
         </View>
-        <Text className="mb-2 text-header font-bold text-text">パスもん</Text>
+        <Text
+          className="mb-2 text-header font-semibold text-text"
+          style={{ letterSpacing: 1 }}
+        >
+          パスもん
+        </Text>
         <Text className="text-center text-body text-subtext">
           かんたん・あんしん{"\n"}パスワード管理
         </Text>
       </View>
 
       {error ? (
-        <View className="mb-4 w-full rounded-button bg-danger/10 p-4">
+        <View
+          className="mb-4 w-full rounded-button p-4"
+          style={{
+            backgroundColor: "rgba(255,107,107,0.12)",
+            borderWidth: 1,
+            borderColor: "rgba(255,107,107,0.25)",
+          }}
+        >
           <Text className="text-center text-body text-danger">{error}</Text>
         </View>
       ) : null}

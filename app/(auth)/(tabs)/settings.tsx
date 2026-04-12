@@ -42,7 +42,7 @@ export default function Settings() {
         <View className="mt-4 gap-4">
           <Card>
             <View className="gap-2">
-              <Text className="text-subtitle font-bold text-text">
+              <Text className="text-subtitle font-semibold text-text">
                 アカウント
               </Text>
               <View className="gap-1">
@@ -56,7 +56,7 @@ export default function Settings() {
 
           <Card>
             <View className="gap-2">
-              <Text className="text-subtitle font-bold text-text">
+              <Text className="text-subtitle font-semibold text-text">
                 アプリ情報
               </Text>
               <View className="flex-row items-center justify-between">

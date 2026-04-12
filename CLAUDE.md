@@ -14,6 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **フロントエンド:** Expo 54 (React Native 0.81) + React 19 + TypeScript 5.9
 - **ルーティング:** Expo Router 6（ファイルベース、型付きルート有効）
 - **スタイリング:** NativeWind (Tailwind CSS)
+- **フォント:** M PLUS Rounded 1c（丸ゴシック、`@expo-google-fonts/m-plus-rounded-1c`）
 - **バックエンド/DB:** Supabase (PostgreSQL) — MCP接続設定済み
 - **認証:** Supabase Auth (Google OAuth) via expo-auth-session
 - **暗号化:** Supabase pgcrypto (AES-256サーバーサイド暗号化)
@@ -38,7 +39,7 @@ eas build --platform android --profile preview  # APKビルド
 - `components/` — 共通UIコンポーネント
 - `hooks/` — カスタムフック
 - `lib/` — Supabaseクライアント等のユーティリティ
-- `constants/` — テーマ・定数
+- `constants/` — テーマ・定数（`theme.ts` にカラー・フォント・サイズ定義）
 - `types/` — TypeScript型定義
 - `docs/` — 開発チケット（タスク管理）
 - `tsconfig.json` で `@/*` → プロジェクトルートのパスエイリアス設定済み
@@ -57,10 +58,33 @@ eas build --platform android --profile preview  # APKビルド
 | ルールファイル | 内容 | トリガー |
 |---------------|------|---------|
 | `expo-best-practices.md` | Expo Router, Supabase連携, パフォーマンス | `app/`, `components/`, `hooks/` |
-| `ui-ux-senior.md` | シニア向けUI制約, カラーパレット | `app/`, `components/`, `constants/` |
+| `ui-ux-senior.md` | シニア向けUI制約, カラーパレット, フォント | `app/`, `components/`, `constants/` |
 | `security.md` | 暗号化, RLS, トークン管理 | `lib/`, `hooks/`, `app/` |
 | `eas-build.md` | EAS Build設定, 配布 | `eas.json`, `app.json`, `app.config.*` |
 | `ticket-management.md` | チケットTODO管理ルール | `docs/` |
+
+## デザインシステム
+
+### テーマ: ダークネイビー × ウォームゴールド
+
+「上品で落ち着いた、スタイリッシュで迷わない」がコンセプト。
+
+- 背景: `#091b36`（ダークネイビー）
+- カード: `#0d2847`（ネイビーサーフェス）+ `rgba(255,255,255,0.06)` ボーダー
+- アクセント: `#D4A056`（ウォームゴールド）
+- テキスト: `#FFFFFF` / サブテキスト: `#8BA3C4`
+
+### フォント
+
+- **M PLUS Rounded 1c**（丸ゴシック）をグローバル適用
+- `_layout.tsx` で `Text.render` をパッチし、全 Text に `fontFamily: "MPlusRounded"` をデフォルト設定
+- `constants/theme.ts` の `FontFamily` 定数: `regular` / `medium` / `bold`
+- `style` で直接フォント指定する場合は `FontFamily.*` 定数を使用
+
+### NativeWind × style の注意
+
+- Pressable の `style` コールバック関数と NativeWind `className` は Web で競合することがある
+- 確実にスタイルを適用するには、純粋な `style` プロパティのみを使用する（Button, FAB 等で実践済み）
 
 ## 認証アーキテクチャ
 
@@ -73,7 +97,8 @@ eas build --platform android --profile preview  # APKビルド
 
 ## レイアウト構成
 
-- `app/_layout.tsx` で `SafeAreaProvider` + `StatusBar`（style="dark"）をルートに配置
+- `app/_layout.tsx` で `SafeAreaProvider` + フォント読み込み + `StatusBar`（style="light"）をルートに配置
+- フォント読み込み完了まではローディング表示（`fontsLoaded` チェック）
 - 各画面で `useSafeAreaInsets()` を使い、ノッチ・ステータスバー領域を動的に回避
 - ローディング画面にも `SafeAreaProvider` を適用（早期リターン時の表示崩れ防止）
 - タブバーでも `useSafeAreaInsets().bottom` を加算（Android ナビゲーションバー対応）
@@ -81,7 +106,7 @@ eas build --platform android --profile preview  # APKビルド
 ## ナビゲーション構成
 
 ```
-app/_layout.tsx          → SafeAreaProvider + AuthContext + Slot
+app/_layout.tsx          → SafeAreaProvider + Font + AuthContext + Slot
 ├── sign-in.tsx          → 未認証用（ルート直下）
 └── (auth)/_layout.tsx   → 認証ガード + Stack
     ├── (tabs)/_layout.tsx → Tabs（ホーム / 共有 / 設定）
@@ -97,6 +122,7 @@ app/_layout.tsx          → SafeAreaProvider + AuthContext + Slot
 - `Alert.alert` は Web で動作しない → `Platform.OS === "web"` で `window.confirm` / `window.alert` にフォールバック
 - `shadow*` スタイルプロパティは RN Web で非推奨 → `boxShadow` CSS shorthand を使用
 - `edgeToEdgeEnabled: true`（Android）→ タブバー・コンテンツで SafeArea insets を適用必須
+- Pressable の `style` コールバック + NativeWind `className` は Web で競合 → 確実性が必要な箇所は純粋 `style` を使用
 
 ## 現在の状態
 
@@ -105,3 +131,4 @@ Phase 1〜4 完了（チケット01〜09）。全機能実装済み、APK ビル
 - Phase 2: CRUD、一覧検索、タブナビゲーション
 - Phase 3: 家族共有（招待コード、閲覧専用、共有解除）
 - Phase 4: EAS Build APK配布、セットアップ手順書
+- Phase 5: UIリデザイン（ダークネイビー × ゴールド、M PLUS Rounded 1c フォント）

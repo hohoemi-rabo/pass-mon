@@ -304,8 +304,18 @@ function ViewMode({
           <Button title="削除する" variant="danger" onPress={onDelete} />
         </View>
       ) : (
-        <View className="mt-4 rounded-button p-3" style={{ backgroundColor: Colors.secondary + "15" }}>
-          <Text className="text-center text-body" style={{ color: Colors.secondaryDark }}>
+        <View
+          className="mt-4 rounded-button p-3"
+          style={{
+            backgroundColor: "rgba(91,191,184,0.12)",
+            borderWidth: 1,
+            borderColor: "rgba(91,191,184,0.25)",
+          }}
+        >
+          <Text
+            className="text-center text-body"
+            style={{ color: Colors.secondary }}
+          >
             閲覧のみ（家族共有）
           </Text>
         </View>
@@ -386,7 +396,14 @@ function EditMode({
       />
 
       {saveError ? (
-        <View className="rounded-button bg-danger/10 p-4">
+        <View
+          className="rounded-button p-4"
+          style={{
+            backgroundColor: "rgba(255,107,107,0.12)",
+            borderWidth: 1,
+            borderColor: "rgba(255,107,107,0.25)",
+          }}
+        >
           <Text className="text-center text-body text-danger">{saveError}</Text>
         </View>
       ) : null}

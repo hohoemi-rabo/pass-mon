@@ -123,7 +123,14 @@ export default function AddCredential() {
           />
 
           {saveError ? (
-            <View className="rounded-button bg-danger/10 p-4">
+            <View
+              className="rounded-button p-4"
+              style={{
+                backgroundColor: "rgba(255,107,107,0.12)",
+                borderWidth: 1,
+                borderColor: "rgba(255,107,107,0.25)",
+              }}
+            >
               <Text className="text-center text-body text-danger">
                 {saveError}
               </Text>

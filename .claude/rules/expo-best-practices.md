@@ -10,13 +10,14 @@ paths:
 
 ## ルートレイアウト構成
 
-`_layout.tsx` では以下の順序でプロバイダーをネストする:
+`_layout.tsx` では以下の順序でプロバイダーをネ���トする:
 
 ```tsx
 // app/_layout.tsx
 export default function RootLayout() {
   const auth = useAuthProvider();
-  if (auth.isLoading) {
+  const [fontsLoaded] = useFonts({...});
+  if (auth.isLoading || !fontsLoaded) {
     return (
       <SafeAreaProvider>
         <LoadingSpinner />
@@ -25,7 +26,7 @@ export default function RootLayout() {
   }
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <AuthContext.Provider value={auth}>
         <Slot />
       </AuthContext.Provider>
@@ -35,7 +36,9 @@ export default function RootLayout() {
 ```
 
 - `SafeAreaProvider` は最外層に配置（ローディング画面含む全パスで必要）
-- `StatusBar` は背景色 `#FFF8F0` に合わせて `style="dark"`
+- `StatusBar` は背景色 `#091b36` に合わせて `style="light"`
+- フォント読み込み（`useFonts`）完了までローディング表示
+- `Text.render` パッチでグローバルフォント適用（フォント読み込み前に実行）
 - 早期リターン（ローディング等）でも `SafeAreaProvider` を忘れないこと
 
 ## SafeArea の適用
@@ -106,3 +109,4 @@ if (isLoggedIn) return <Redirect href="/" />;
 - **React Compiler 有効**: `useMemo`/`useCallback` の手動追加は不要（自動最適化される）
 - **Web 対応 Alert**: `Alert.alert` は Web で動作しない。`Platform.OS === "web"` で `window.confirm` / `window.alert` にフォールバックすること
 - **boxShadow 使用**: `shadow*` プロパティ（shadowColor, shadowOffset 等）は RN Web で非推奨。`boxShadow` CSS shorthand を使用する
+- **NativeWind × style 競合回避**: Pressable の `style` コールバック関数と NativeWind `className` は Web で競合する場合がある。確実にスタイルを適用する必要がある箇所（Button, FAB 等）では NativeWind を使わず純粋 `style` を使用する

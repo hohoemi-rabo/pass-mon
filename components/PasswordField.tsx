@@ -31,12 +31,11 @@ export function PasswordField({ label, value }: PasswordFieldProps) {
     <View className="gap-1">
       <Text className="text-body font-semibold text-text">{label}</Text>
       <View className="flex-row items-center gap-2">
-        <Text className="flex-1 text-body" style={{ color: hasValue ? Colors.text : Colors.subtext }}>
-          {hasValue
-            ? isVisible
-              ? value
-              : "●●●●●●●●"
-            : "未登録"}
+        <Text
+          className="flex-1 text-body"
+          style={{ color: hasValue ? Colors.text : Colors.subtext }}
+        >
+          {hasValue ? (isVisible ? value : "●●●●●●●●") : "未登録"}
         </Text>
         {hasValue ? (
           <View className="flex-row gap-1">

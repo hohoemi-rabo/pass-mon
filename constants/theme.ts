@@ -5,23 +5,34 @@
  * - フォント最小18px、見出し22px以上
  * - タップ領域最小48x48dp
  * - WCAG AA準拠コントラスト比
+ *
+ * デザインコンセプト: ダークネイビー × ウォームゴールド
+ * 上品で落ち着いた、スタイリッシュなデザイン
  */
 
 export const Colors = {
-  primary: "#FF8C42",
-  primaryDark: "#E67A30",
-  secondary: "#4ECDC4",
-  secondaryDark: "#3DBDB4",
-  background: "#FFF8F0",
-  card: "#FFFFFF",
-  text: "#333333",
-  subtext: "#888888",
+  primary: "#D4A056",
+  primaryDark: "#B8893E",
+  secondary: "#5BBFB8",
+  secondaryDark: "#4AA9A2",
+  background: "#091b36",
+  card: "#0d2847",
+  cardElevated: "#112f52",
+  text: "#FFFFFF",
+  subtext: "#8BA3C4",
   danger: "#FF6B6B",
   dangerDark: "#E85C5C",
   success: "#51CF66",
-  border: "#E5E5E5",
-  inputBorder: "#CCCCCC",
-  inputFocus: "#FF8C42",
+  border: "#1A3556",
+  inputBorder: "#2A4A6E",
+  inputFocus: "#D4A056",
+  tabBar: "#061527",
+} as const;
+
+export const FontFamily = {
+  regular: "MPlusRounded",
+  medium: "MPlusRounded-Medium",
+  bold: "MPlusRounded-Bold",
 } as const;
 
 export const FontSizes = {

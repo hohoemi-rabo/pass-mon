@@ -152,7 +152,7 @@ export default function ShareScreen() {
         <View className="mt-4 gap-6">
           {/* Owner Section: My Sharing */}
           <View className="gap-3">
-            <Text className="text-title font-bold text-text">
+            <Text className="text-title font-semibold text-text">
               あなたの共有設定
             </Text>
             <Text className="text-body text-subtext">
@@ -184,7 +184,7 @@ export default function ShareScreen() {
 
           {/* Family Member Section: Received Sharing */}
           <View className="gap-3">
-            <Text className="text-title font-bold text-text">
+            <Text className="text-title font-semibold text-text">
               家族から共有を受ける
             </Text>
 
@@ -197,7 +197,7 @@ export default function ShareScreen() {
                     color={Colors.success}
                   />
                   <View className="flex-1">
-                    <Text className="text-body font-bold text-text">
+                    <Text className="text-body font-semibold text-text">
                       共有中
                     </Text>
                     <Text className="text-body text-subtext">
@@ -230,7 +230,14 @@ export default function ShareScreen() {
           </View>
 
           {actionError ? (
-            <View className="rounded-button bg-danger/10 p-4">
+            <View
+              className="rounded-button p-4"
+              style={{
+                backgroundColor: "rgba(255,107,107,0.12)",
+                borderWidth: 1,
+                borderColor: "rgba(255,107,107,0.25)",
+              }}
+            >
               <Text className="text-center text-body text-danger">
                 {actionError}
               </Text>
@@ -273,7 +280,7 @@ function ShareStatusCard({
             color={isPending ? Colors.primary : Colors.success}
           />
           <View className="flex-1">
-            <Text className="text-body font-bold text-text">
+            <Text className="text-body font-semibold text-text">
               {isPending ? "招待中" : "共有中"}
             </Text>
             <Text className="text-body text-subtext">
@@ -285,10 +292,17 @@ function ShareStatusCard({
         </View>
 
         <View
-          className="rounded-input p-3"
-          style={{ backgroundColor: Colors.background }}
+          className="rounded-button p-3"
+          style={{
+            backgroundColor: Colors.cardElevated,
+            borderWidth: 1,
+            borderColor: "rgba(212,160,86,0.2)",
+          }}
         >
-          <Text className="text-center text-title font-bold tracking-widest text-text">
+          <Text
+            className="text-center text-title font-semibold tracking-widest"
+            style={{ color: Colors.primary }}
+          >
             {share.inviteCode}
           </Text>
         </View>

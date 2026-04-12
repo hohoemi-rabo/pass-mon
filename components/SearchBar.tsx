@@ -15,8 +15,12 @@ export function SearchBar({
 }: SearchBarProps) {
   return (
     <View
-      className="flex-row items-center rounded-input border px-3"
-      style={{ borderColor: Colors.inputBorder }}
+      className="flex-row items-center rounded-button px-3"
+      style={{
+        backgroundColor: Colors.card,
+        borderWidth: 1,
+        borderColor: Colors.border,
+      }}
     >
       <Ionicons name="search" size={22} color={Colors.subtext} />
       <TextInput
