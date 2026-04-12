@@ -41,6 +41,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     "expo-secure-store",
   ],
+  extra: {
+    eas: {
+      projectId: "e7e1446a-6c84-420e-9eec-c6e23aa1e1ff",
+    },
+  },
   experiments: {
     typedRoutes: true,
     reactCompiler: true,

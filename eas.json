@@ -16,12 +16,16 @@
         "buildType": "apk"
       },
       "env": {
-        "APP_VARIANT": "preview"
+        "APP_VARIANT": "preview",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://yvkypckatrheteehwkgh.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2a3lwY2thdHJoZXRlZWh3a2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5Mzk5MzAsImV4cCI6MjA5MTUxNTkzMH0.L38wZkUSaaE0iBf1OEMlzQ2wWuQr_Y5PAWyPYlD38dk"
       }
     },
     "production": {
       "env": {
-        "APP_VARIANT": "production"
+        "APP_VARIANT": "production",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://yvkypckatrheteehwkgh.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2a3lwY2thdHJoZXRlZWh3a2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5Mzk5MzAsImV4cCI6MjA5MTUxNTkzMH0.L38wZkUSaaE0iBf1OEMlzQ2wWuQr_Y5PAWyPYlD38dk"
       }
     }
   },
