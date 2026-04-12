@@ -181,7 +181,10 @@ export default function CredentialDetail() {
       className="flex-1 bg-background"
       style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
     >
-      <Header title={isEditing ? "編集中" : credential.service_name} />
+      <Header
+        title={isEditing ? "編集中" : credential.service_name}
+        onBack={isEditing ? undefined : () => router.back()}
+      />
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
