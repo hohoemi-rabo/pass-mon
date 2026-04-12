@@ -45,19 +45,27 @@ export default function RootLayout() {
 
 ## 認証と保護ルート
 
-認証状態は `AuthContext` で一元管理。`_layout.tsx` で `useAuthProvider()` を呼び、Provider で子に共有する。各画面では `useAuth()` で Context から読み取り、未認証時は `<Redirect>` でガードする。
+認証状態は `AuthContext` で一元管理。認証ガードは `app/(auth)/_layout.tsx` で一元化されており、`(auth)` グループ内の個別画面では認証チェック不要。
 
 ```tsx
-// app/index.tsx（認証必須画面）
+// app/(auth)/_layout.tsx — 認証ガード（一箇所で管理）
 const { isLoggedIn } = useAuth();
 if (!isLoggedIn) return <Redirect href="/sign-in" />;
+return <Stack screenOptions={{ headerShown: false }}>...</Stack>;
 
-// app/sign-in.tsx（未認証専用画面）
+// app/sign-in.tsx — 未認証専用画面（ルート直下、(auth) の外）
 const { isLoggedIn } = useAuth();
 if (isLoggedIn) return <Redirect href="/" />;
 ```
 
 **注意:** `useAuth()` の独立インスタンスを各画面で作ると、初期化タイミングのズレでリダイレクトループが発生する。必ず Context 経由で共有すること。
+
+## ナビゲーション構成
+
+- `(auth)` グループ: Stack ナビゲーター（認証ガード付き）
+- `(tabs)` グループ: `(auth)` 内のタブナビゲーター（ホーム / 共有 / 設定）
+- `add.tsx`, `[id].tsx`: `(auth)` 直下に配置し、Stack push でタブの上に表示
+- タブバーは `useSafeAreaInsets().bottom` を加算して Android ナビゲーションバーとの重なりを防止
 
 ## セッション管理・セキュアストレージ
 
@@ -96,3 +104,5 @@ if (isLoggedIn) return <Redirect href="/" />;
 - **明示的条件レンダリング**: `{value && <Component />}` ではなく `{value ? <Component /> : null}` を使用（falsy値の意図しないレンダリング防止）
 - **早期リターン・ガード**: 外部API呼び出しの戻り値は使用前に null チェックし、無効な値で処理を続行しない
 - **React Compiler 有効**: `useMemo`/`useCallback` の手動追加は不要（自動最適化される）
+- **Web 対応 Alert**: `Alert.alert` は Web で動作しない。`Platform.OS === "web"` で `window.confirm` / `window.alert` にフォールバックすること
+- **boxShadow 使用**: `shadow*` プロパティ（shadowColor, shadowOffset 等）は RN Web で非推奨。`boxShadow` CSS shorthand を使用する

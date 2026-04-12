@@ -67,16 +67,41 @@ eas build --platform android --profile preview  # APKビルド
 - `hooks/useAuth.ts` に `AuthContext` + `useAuthProvider` + `useAuth` を定義
 - `_layout.tsx` で `useAuthProvider()` → `AuthContext.Provider` で全画面に共有
 - 各画面は `useAuth()` で Context から認証状態を取得（独立インスタンスは作らない）
-- 認証ガードは各画面で `<Redirect>` を使用（`Stack.Protected` は不使用）
+- 認証ガードは `app/(auth)/_layout.tsx` で一元化（個別画面での `<Redirect>` は不要）
 - Web: ページリダイレクト方式（ポップアップはCOOPでブロックされるため）
 - ネイティブ: `WebBrowser.openAuthSessionAsync` でアプリ内ブラウザ方式
 
 ## レイアウト構成
 
-- `_layout.tsx` で `SafeAreaProvider` + `StatusBar`（style="dark"）をルートに配置
+- `app/_layout.tsx` で `SafeAreaProvider` + `StatusBar`（style="dark"）をルートに配置
 - 各画面で `useSafeAreaInsets()` を使い、ノッチ・ステータスバー領域を動的に回避
 - ローディング画面にも `SafeAreaProvider` を適用（早期リターン時の表示崩れ防止）
+- タブバーでも `useSafeAreaInsets().bottom` を加算（Android ナビゲーションバー対応）
+
+## ナビゲーション構成
+
+```
+app/_layout.tsx          → SafeAreaProvider + AuthContext + Slot
+├── sign-in.tsx          → 未認証用（ルート直下）
+└── (auth)/_layout.tsx   → 認証ガード + Stack
+    ├── (tabs)/_layout.tsx → Tabs（ホーム / 共有 / 設定）
+    │   ├── index.tsx      → ホーム一覧（FlatList + 検索 + FAB）
+    │   ├── share.tsx      → 家族共有設定
+    │   └── settings.tsx   → 設定（ログアウト・バージョン）
+    ├── add.tsx            → 新規登録（Stack push、タブ非表示）
+    └── [id].tsx           → 詳細・編集（Stack push、タブ非表示）
+```
+
+## クロスプラットフォーム対応
+
+- `Alert.alert` は Web で動作しない → `Platform.OS === "web"` で `window.confirm` / `window.alert` にフォールバック
+- `shadow*` スタイルプロパティは RN Web で非推奨 → `boxShadow` CSS shorthand を使用
+- `edgeToEdgeEnabled: true`（Android）→ タブバー・コンテンツで SafeArea insets を適用必須
 
 ## 現在の状態
 
-Phase 1 完了（チケット01〜04）。環境構築、DB設計、テーマ・UI基盤、Google OAuth認証が実装済み。CRUD・一覧検索・ナビゲーション等のPhase 2機能は未実装。
+Phase 1〜4 完了（チケット01〜09）。全機能実装済み、APK ビルド・配布フロー確立済み。
+- Phase 1: 環境構築、DB設計、テーマ・UI基盤、Google OAuth認証
+- Phase 2: CRUD、一覧検索、タブナビゲーション
+- Phase 3: 家族共有（招待コード、閲覧専用、共有解除）
+- Phase 4: EAS Build APK配布、セットアップ手順書

@@ -15,3 +15,5 @@ paths:
 - `EXPO_PUBLIC_` 環境変数には秘密情報を含めない（クライアントに露出するため）
 - トークンは `expo-secure-store` で保存（AsyncStorage は使わない）
 - `SECURITY DEFINER` 関数には必ず `SET search_path = public` を付与（デフォルトの search_path ではテーブルが見つからない）
+- `accept_family_invite` RPC も `SECURITY DEFINER`（家族側が RLS を迂回して招待を受諾するため）
+- EAS Build の環境変数は EAS Secrets で管理（`eas.json` に直接記載しない）
