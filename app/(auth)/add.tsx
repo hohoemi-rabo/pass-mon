@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
@@ -43,8 +43,9 @@ export default function AddCredential() {
     setSaveError(null);
     try {
       await createCredential(form);
+      Keyboard.dismiss();
       setIsSaving(false);
-      router.dismiss();
+      router.back();
     } catch (e) {
       setSaveError(
         e instanceof Error
