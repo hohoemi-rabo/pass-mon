@@ -43,11 +43,7 @@ export default function AddCredential() {
     setSaveError(null);
     try {
       await createCredential(form);
-      if (router.canGoBack()) {
-        router.back();
-      } else {
-        router.replace("/");
-      }
+      router.replace("/");
     } catch (e) {
       setSaveError(
         e instanceof Error
