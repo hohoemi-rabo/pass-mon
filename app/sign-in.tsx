@@ -3,9 +3,10 @@ import { Text, View } from "react-native";
 import { Redirect } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button } from "@/components/Button";
+import { ErrorBanner } from "@/components/ErrorBanner";
 import { signInWithGoogle } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Colors } from "@/constants/theme";
+import { Colors, Overlays } from "@/constants/theme";
 
 export default function SignIn() {
   const { isLoggedIn } = useAuth();
@@ -21,7 +22,6 @@ export default function SignIn() {
       setError(null);
       setIsLoading(true);
       await signInWithGoogle();
-      // Success: onAuthStateChange will trigger Redirect, no setState needed
     } catch (e) {
       setError(
         e instanceof Error
@@ -38,9 +38,9 @@ export default function SignIn() {
         <View
           className="mb-6 h-28 w-28 items-center justify-center rounded-full"
           style={{
-            backgroundColor: "rgba(212,160,86,0.15)",
+            backgroundColor: Overlays.primaryLight,
             borderWidth: 1.5,
-            borderColor: "rgba(212,160,86,0.3)",
+            borderColor: Overlays.primaryBorder,
           }}
         >
           <Ionicons name="key" size={48} color={Colors.primary} />
@@ -57,15 +57,8 @@ export default function SignIn() {
       </View>
 
       {error ? (
-        <View
-          className="mb-4 w-full rounded-button p-4"
-          style={{
-            backgroundColor: "rgba(255,107,107,0.12)",
-            borderWidth: 1,
-            borderColor: "rgba(255,107,107,0.25)",
-          }}
-        >
-          <Text className="text-center text-body text-danger">{error}</Text>
+        <View className="mb-4 w-full">
+          <ErrorBanner message={error} />
         </View>
       ) : null}
 

@@ -29,6 +29,17 @@ export const Colors = {
   tabBar: "#061527",
 } as const;
 
+export const Overlays = {
+  primaryLight: "rgba(212,160,86,0.15)",
+  primaryBorder: "rgba(212,160,86,0.3)",
+  dangerLight: "rgba(255,107,107,0.12)",
+  dangerBorder: "rgba(255,107,107,0.25)",
+  secondaryLight: "rgba(91,191,184,0.12)",
+  secondaryBorder: "rgba(91,191,184,0.25)",
+  cardBorder: "rgba(255,255,255,0.06)",
+  pressedLight: "rgba(255,255,255,0.08)",
+} as const;
+
 export const FontFamily = {
   regular: "MPlusRounded",
   medium: "MPlusRounded-Medium",

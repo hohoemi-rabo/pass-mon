@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
 import { CredentialCard } from "@/components/CredentialCard";
+import { ErrorBanner } from "@/components/ErrorBanner";
 import { useCredentials } from "@/hooks/useCredentials";
 import { Colors } from "@/constants/theme";
 import type { CredentialSummary } from "@/types/credential";
@@ -55,7 +56,6 @@ export default function Index() {
     }
   };
 
-  // Fetch on mount and re-fetch when navigating back from add/edit/delete
   useFocusEffect(
     useCallback(() => {
       fetchList();
@@ -134,15 +134,8 @@ export default function Index() {
       />
 
       {loadError ? (
-        <View
-          className="absolute bottom-24 left-4 right-4 rounded-button p-3"
-          style={{
-            backgroundColor: "rgba(255,107,107,0.12)",
-            borderWidth: 1,
-            borderColor: "rgba(255,107,107,0.25)",
-          }}
-        >
-          <Text className="text-center text-body text-danger">{loadError}</Text>
+        <View className="absolute bottom-24 left-4 right-4">
+          <ErrorBanner message={loadError} />
         </View>
       ) : null}
 

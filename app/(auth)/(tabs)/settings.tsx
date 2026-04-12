@@ -1,32 +1,21 @@
-import { Alert, Platform, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Constants from "expo-constants";
 import { Header } from "@/components/Header";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { useAuth } from "@/hooks/useAuth";
+import { confirmDialog } from "@/lib/platform";
 import { Colors } from "@/constants/theme";
 
-const APP_VERSION = "1.0.0";
+const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
 
 export default function Settings() {
   const { user, signOut } = useAuth();
   const insets = useSafeAreaInsets();
 
   const handleSignOut = () => {
-    if (Platform.OS === "web") {
-      if (window.confirm("ログアウトしますか？")) {
-        signOut();
-      }
-      return;
-    }
-    Alert.alert("ログアウト", "ログアウトしますか？", [
-      { text: "キャンセル", style: "cancel" },
-      {
-        text: "ログアウト",
-        style: "destructive",
-        onPress: signOut,
-      },
-    ]);
+    confirmDialog("ログアウト", "ログアウトしますか？", signOut);
   };
 
   return (

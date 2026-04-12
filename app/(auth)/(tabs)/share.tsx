@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
-  Platform,
   ScrollView,
   Share,
   Text,
@@ -15,12 +13,14 @@ import { Header } from "@/components/Header";
 import { TextInput } from "@/components/TextInput";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import { ErrorBanner } from "@/components/ErrorBanner";
 import {
   useFamilyShare,
   type FamilyShareInfo,
   type SharedFromInfo,
 } from "@/hooks/useFamilyShare";
-import { Colors } from "@/constants/theme";
+import { confirmDialog } from "@/lib/platform";
+import { Colors, Overlays } from "@/constants/theme";
 
 export default function ShareScreen() {
   const router = useRouter();
@@ -31,12 +31,12 @@ export default function ShareScreen() {
     createInvite,
     acceptInvite,
     revokeShare,
-    isLoading: hookLoading,
   } = useFamilyShare();
 
   const [myShare, setMyShare] = useState<FamilyShareInfo | null>(null);
   const [sharedFrom, setSharedFrom] = useState<SharedFromInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isActionLoading, setIsActionLoading] = useState(false);
   const [inviteInput, setInviteInput] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -50,7 +50,7 @@ export default function ShareScreen() {
         setMyShare(share);
         setSharedFrom(from);
       } catch {
-        // error handled in hook
+        // Initial load failure is non-critical; user can retry
       } finally {
         setIsLoading(false);
       }
@@ -61,6 +61,7 @@ export default function ShareScreen() {
 
   const handleCreateInvite = async () => {
     setActionError(null);
+    setIsActionLoading(true);
     try {
       const share = await createInvite();
       setMyShare(share);
@@ -68,6 +69,8 @@ export default function ShareScreen() {
       setActionError(
         e instanceof Error ? e.message : "招待の作成に失敗しました",
       );
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
@@ -84,50 +87,38 @@ export default function ShareScreen() {
 
   const handleRevoke = () => {
     if (!myShare) return;
-    const doRevoke = async () => {
-      setActionError(null);
-      try {
-        await revokeShare(myShare.id);
-        setMyShare(null);
-      } catch (e) {
-        setActionError(
-          e instanceof Error ? e.message : "共有の解除に失敗しました",
-        );
-      }
-    };
-    if (Platform.OS === "web") {
-      if (
-        window.confirm(
-          "家族との共有を解除しますか？\n相手はあなたのアカウント情報を閲覧できなくなります。",
-        )
-      ) {
-        doRevoke();
-      }
-      return;
-    }
-    Alert.alert(
+    confirmDialog(
       "共有を解除",
       "家族との共有を解除しますか？\n相手はあなたのアカウント情報を閲覧できなくなります。",
-      [
-        { text: "キャンセル", style: "cancel" },
-        { text: "解除する", style: "destructive", onPress: doRevoke },
-      ],
+      async () => {
+        setActionError(null);
+        try {
+          await revokeShare(myShare.id);
+          setMyShare(null);
+        } catch (e) {
+          setActionError(
+            e instanceof Error ? e.message : "共有の解除に失敗しました",
+          );
+        }
+      },
     );
   };
 
   const handleAcceptInvite = async () => {
     if (!inviteInput.trim()) return;
     setActionError(null);
+    setIsActionLoading(true);
     try {
       await acceptInvite(inviteInput);
       setInviteInput("");
-      // Re-fetch to show updated state
       const from = await getSharedFrom();
       setSharedFrom(from);
     } catch (e) {
       setActionError(
         e instanceof Error ? e.message : "招待の受諾に失敗しました",
       );
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
@@ -150,7 +141,6 @@ export default function ShareScreen() {
         contentContainerStyle={{ paddingBottom: 32 }}
       >
         <View className="mt-4 gap-6">
-          {/* Owner Section: My Sharing */}
           <View className="gap-3">
             <Text className="text-title font-semibold text-text">
               あなたの共有設定
@@ -162,7 +152,7 @@ export default function ShareScreen() {
             {myShare ? (
               <ShareStatusCard
                 share={myShare}
-                isLoading={hookLoading}
+                isLoading={isActionLoading}
                 onShare={handleShareLink}
                 onRevoke={handleRevoke}
               />
@@ -171,18 +161,16 @@ export default function ShareScreen() {
                 title="家族を招待する"
                 variant="primary"
                 onPress={handleCreateInvite}
-                disabled={hookLoading}
+                disabled={isActionLoading}
               />
             )}
           </View>
 
-          {/* Divider */}
           <View
             className="h-px"
             style={{ backgroundColor: Colors.border }}
           />
 
-          {/* Family Member Section: Received Sharing */}
           <View className="gap-3">
             <Text className="text-title font-semibold text-text">
               家族から共有を受ける
@@ -220,29 +208,16 @@ export default function ShareScreen() {
                   autoCapitalize="characters"
                 />
                 <Button
-                  title={hookLoading ? "処理中..." : "招待を受ける"}
+                  title={isActionLoading ? "処理中..." : "招待を受ける"}
                   variant="secondary"
                   onPress={handleAcceptInvite}
-                  disabled={hookLoading || !inviteInput.trim()}
+                  disabled={isActionLoading || !inviteInput.trim()}
                 />
               </View>
             )}
           </View>
 
-          {actionError ? (
-            <View
-              className="rounded-button p-4"
-              style={{
-                backgroundColor: "rgba(255,107,107,0.12)",
-                borderWidth: 1,
-                borderColor: "rgba(255,107,107,0.25)",
-              }}
-            >
-              <Text className="text-center text-body text-danger">
-                {actionError}
-              </Text>
-            </View>
-          ) : null}
+          {actionError ? <ErrorBanner message={actionError} /> : null}
 
           <View className="mt-2">
             <Button
@@ -296,7 +271,7 @@ function ShareStatusCard({
           style={{
             backgroundColor: Colors.cardElevated,
             borderWidth: 1,
-            borderColor: "rgba(212,160,86,0.2)",
+            borderColor: Overlays.primaryLight,
           }}
         >
           <Text

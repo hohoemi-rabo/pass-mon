@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -17,9 +16,11 @@ import { Header } from "@/components/Header";
 import { TextInput } from "@/components/TextInput";
 import { Button } from "@/components/Button";
 import { PasswordField } from "@/components/PasswordField";
+import { ErrorBanner } from "@/components/ErrorBanner";
 import { useCredentials } from "@/hooks/useCredentials";
 import { useAuth } from "@/hooks/useAuth";
-import { Colors } from "@/constants/theme";
+import { confirmDialog } from "@/lib/platform";
+import { Colors, Overlays } from "@/constants/theme";
 import type { Credential, CredentialFormData } from "@/types/credential";
 
 function credentialToForm(c: Credential): CredentialFormData {
@@ -78,7 +79,6 @@ export default function CredentialDetail() {
     return () => {
       cancelled = true;
     };
-    // getCredential is stable per render via React Compiler
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -133,23 +133,16 @@ export default function CredentialDetail() {
         if (Platform.OS === "web") {
           window.alert("削除に失敗しました。もう一度お試しください。");
         } else {
-          Alert.alert("エラー", "削除に失敗しました。もう一度お試しください。");
+          import("react-native").then(({ Alert }) =>
+            Alert.alert("エラー", "削除に失敗しました。もう一度お試しください。"),
+          );
         }
       }
     };
-    if (Platform.OS === "web") {
-      if (window.confirm("この情報を削除しますか？\nこの操作は取り消せません。")) {
-        doDelete();
-      }
-      return;
-    }
-    Alert.alert(
+    confirmDialog(
       "確認",
       "この情報を削除しますか？\nこの操作は取り消せません。",
-      [
-        { text: "キャンセル", style: "cancel" },
-        { text: "削除", style: "destructive", onPress: doDelete },
-      ],
+      doDelete,
     );
   };
 
@@ -314,9 +307,9 @@ function ViewMode({
         <View
           className="mt-4 rounded-button p-3"
           style={{
-            backgroundColor: "rgba(91,191,184,0.12)",
+            backgroundColor: Overlays.secondaryLight,
             borderWidth: 1,
-            borderColor: "rgba(91,191,184,0.25)",
+            borderColor: Overlays.secondaryBorder,
           }}
         >
           <Text
@@ -402,18 +395,7 @@ function EditMode({
         style={{ height: 100, textAlignVertical: "top" }}
       />
 
-      {saveError ? (
-        <View
-          className="rounded-button p-4"
-          style={{
-            backgroundColor: "rgba(255,107,107,0.12)",
-            borderWidth: 1,
-            borderColor: "rgba(255,107,107,0.25)",
-          }}
-        >
-          <Text className="text-center text-body text-danger">{saveError}</Text>
-        </View>
-      ) : null}
+      {saveError ? <ErrorBanner message={saveError} /> : null}
 
       <View className="mt-4 gap-3">
         <Button

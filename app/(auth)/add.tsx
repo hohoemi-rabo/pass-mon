@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { TextInput } from "@/components/TextInput";
 import { Button } from "@/components/Button";
+import { ErrorBanner } from "@/components/ErrorBanner";
 import { useCredentials } from "@/hooks/useCredentials";
 import { Colors } from "@/constants/theme";
 import type { CredentialFormData } from "@/types/credential";
@@ -52,7 +53,6 @@ export default function AddCredential() {
       setIsSaving(false);
       return;
     }
-    // Navigate after all async work and state updates are settled
     setIsSaving(false);
     setTimeout(() => router.back(), 50);
   };
@@ -129,20 +129,7 @@ export default function AddCredential() {
             style={{ height: 100, textAlignVertical: "top" }}
           />
 
-          {saveError ? (
-            <View
-              className="rounded-button p-4"
-              style={{
-                backgroundColor: "rgba(255,107,107,0.12)",
-                borderWidth: 1,
-                borderColor: "rgba(255,107,107,0.25)",
-              }}
-            >
-              <Text className="text-center text-body text-danger">
-                {saveError}
-              </Text>
-            </View>
-          ) : null}
+          {saveError ? <ErrorBanner message={saveError} /> : null}
 
           <View className="mt-4 gap-3">
             <Button

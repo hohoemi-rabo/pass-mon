@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import type { PressableProps } from "react-native";
-import { Colors, FontFamily } from "@/constants/theme";
+import { Colors, FontFamily, Overlays } from "@/constants/theme";
 
 type ButtonVariant = "primary" | "secondary" | "danger";
 
@@ -36,7 +36,7 @@ function getButtonStyles(
     case "secondary":
       return {
         container: {
-          backgroundColor: pressed ? "rgba(255,255,255,0.08)" : "transparent",
+          backgroundColor: pressed ? Overlays.pressedLight : "transparent",
           borderWidth: 1.5,
           borderColor: Colors.primary,
         },
@@ -47,7 +47,7 @@ function getButtonStyles(
         container: {
           backgroundColor: pressed
             ? Colors.dangerDark
-            : "rgba(255,107,107,0.15)",
+            : Overlays.dangerLight,
           borderWidth: 1.5,
           borderColor: Colors.danger,
         },
