@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
@@ -43,9 +43,6 @@ export default function AddCredential() {
     setSaveError(null);
     try {
       await createCredential(form);
-      Keyboard.dismiss();
-      setIsSaving(false);
-      router.back();
     } catch (e) {
       setSaveError(
         e instanceof Error
@@ -53,7 +50,11 @@ export default function AddCredential() {
           : "保存に失敗しました。もう一度お試しください。",
       );
       setIsSaving(false);
+      return;
     }
+    // Navigate after all async work and state updates are settled
+    setIsSaving(false);
+    setTimeout(() => router.back(), 50);
   };
 
   return (
