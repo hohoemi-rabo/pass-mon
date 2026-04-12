@@ -43,7 +43,11 @@ export default function AddCredential() {
     setSaveError(null);
     try {
       await createCredential(form);
-      router.back();
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace("/");
+      }
     } catch (e) {
       setSaveError(
         e instanceof Error
@@ -147,7 +151,7 @@ export default function AddCredential() {
             <Button
               title="キャンセル"
               variant="secondary"
-              onPress={() => router.back()}
+              onPress={() => router.canGoBack() ? router.back() : router.replace("/")}
               disabled={isSaving}
             />
           </View>
