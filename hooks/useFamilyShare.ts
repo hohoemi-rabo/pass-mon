@@ -40,28 +40,20 @@ export function useFamilyShare() {
     try {
       const { data, error: fetchError } = await supabase
         .from("family_shares")
-        .select("id, invite_code, status, shared_with_id, created_at")
+        .select(
+          "id, invite_code, status, created_at, shared_with:profiles!family_shares_shared_with_id_fkey(display_name)",
+        )
         .eq("owner_id", user.id)
         .in("status", ["pending", "active"])
         .maybeSingle();
       if (fetchError) throw new Error(fetchError.message);
       if (!data) return null;
 
-      let sharedWithName: string | null = null;
-      if (data.shared_with_id) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("display_name")
-          .eq("id", data.shared_with_id)
-          .single();
-        sharedWithName = profile?.display_name ?? null;
-      }
-
       return {
         id: data.id,
         inviteCode: data.invite_code,
         status: data.status as ShareStatus,
-        sharedWithName,
+        sharedWithName: data.shared_with?.display_name ?? null,
         createdAt: data.created_at,
       };
     } catch (e) {
@@ -82,21 +74,17 @@ export function useFamilyShare() {
     try {
       const { data, error: fetchError } = await supabase
         .from("family_shares")
-        .select("owner_id")
+        .select(
+          "owner_id, owner:profiles!family_shares_owner_id_fkey(display_name)",
+        )
         .eq("shared_with_id", user.id)
         .eq("status", "active")
         .maybeSingle();
       if (fetchError) throw new Error(fetchError.message);
       if (!data) return null;
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("display_name")
-        .eq("id", data.owner_id)
-        .single();
-
       return {
-        ownerName: profile?.display_name ?? null,
+        ownerName: data.owner?.display_name ?? null,
         ownerId: data.owner_id,
       };
     } catch (e) {
