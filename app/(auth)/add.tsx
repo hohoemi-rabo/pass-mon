@@ -43,14 +43,14 @@ export default function AddCredential() {
     setSaveError(null);
     try {
       await createCredential(form);
-      router.replace("/");
+      setIsSaving(false);
+      router.dismiss();
     } catch (e) {
       setSaveError(
         e instanceof Error
           ? e.message
           : "保存に失敗しました。もう一度お試しください。",
       );
-    } finally {
       setIsSaving(false);
     }
   };
