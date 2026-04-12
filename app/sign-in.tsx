@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { Redirect } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button } from "@/components/Button";
 import { signInWithGoogle } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
@@ -43,11 +43,11 @@ export default function SignIn() {
         </Text>
       </View>
 
-      {error && (
+      {error ? (
         <View className="mb-4 w-full rounded-button bg-danger/10 p-4">
           <Text className="text-center text-body text-danger">{error}</Text>
         </View>
-      )}
+      ) : null}
 
       <View className="w-full">
         <Button

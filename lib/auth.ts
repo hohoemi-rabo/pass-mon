@@ -29,10 +29,11 @@ export async function signInWithGoogle() {
     });
     if (error) throw error;
 
-    const res = await WebBrowser.openAuthSessionAsync(
-      data?.url ?? "",
-      redirectTo,
-    );
+    if (!data?.url) {
+      throw new Error("OAuth URLの取得に失敗しました");
+    }
+
+    const res = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
 
     if (res.type === "success") {
       const { params, errorCode } = QueryParams.getQueryParams(res.url);
