@@ -36,12 +36,13 @@ eas build --platform android --profile preview  # APKビルド
 ## アーキテクチャ
 
 - `app/` — Expo Router ファイルベースルーティング
-- `components/` — 共通UIコンポーネント
-- `hooks/` — カスタムフック
-- `lib/` — Supabaseクライアント等のユーティリティ
-- `constants/` — テーマ・定数（`theme.ts` にカラー・フォント・サイズ定義）
+- `components/` — 共通UIコンポーネント（`ErrorBanner`, `Button`, `Card`, `Header` 等）
+- `hooks/` — カスタムフック（throw-only エラーパターン、内部 state なし）
+- `lib/` — ユーティリティ（`supabase.ts`, `auth.ts`, `platform.ts`）
+- `constants/` — テーマ・定数（`theme.ts` に `Colors`, `Overlays`, `FontFamily` 等）
 - `types/` — TypeScript型定義
 - `docs/` — 開発チケット（タスク管理）
+- `scripts/` — アイコン生成スクリプト（SVGソース + sharp変換）
 - `tsconfig.json` で `@/*` → プロジェクトルートのパスエイリアス設定済み
 
 ## Supabase MCP
@@ -70,9 +71,10 @@ eas build --platform android --profile preview  # APKビルド
 「上品で落ち着いた、スタイリッシュで迷わない」がコンセプト。
 
 - 背景: `#091b36`（ダークネイビー）
-- カード: `#0d2847`（ネイビーサーフェス）+ `rgba(255,255,255,0.06)` ボーダー
+- カード: `#0d2847`（ネイビーサーフェス）+ `Overlays.cardBorder`
 - アクセント: `#D4A056`（ウォームゴールド）
 - テキスト: `#FFFFFF` / サブテキスト: `#8BA3C4`
+- オーバーレイ色は `constants/theme.ts` の `Overlays` 定数を使用（RGBA ハードコード禁止）
 
 ### フォント
 
@@ -81,10 +83,36 @@ eas build --platform android --profile preview  # APKビルド
 - `constants/theme.ts` の `FontFamily` 定数: `regular` / `medium` / `bold`
 - `style` で直接フォント指定する場合は `FontFamily.*` 定数を使用
 
+### 共通コンポーネント
+
+- **ErrorBanner** (`components/ErrorBanner.tsx`): エラーメッセージ表示。全画面で統一使用
+- **Header** (`components/Header.tsx`): オプション `onBack` で戻る矢印を表示
+- **Button** (`components/Button.tsx`): `primary` / `secondary` / `danger` の3バリアント
+- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` 時にパスワード表示切替アイコン付き
+
 ### NativeWind × style の注意
 
 - Pressable の `style` コールバック関数と NativeWind `className` は Web で競合することがある
 - 確実にスタイルを適用するには、純粋な `style` プロパティのみを使用する（Button, FAB 等で実践済み）
+
+## エラーハンドリングパターン
+
+- **Hook（`useCredentials`, `useFamilyShare`）**: throw のみ。内部に `isLoading` / `error` state を持たない
+- **画面コンポーネント**: try-catch でキャッチし、ローカル state でエラーメッセージを管理
+- **エラー表示**: `ErrorBanner` コンポーネントを使用
+
+## クロスプラットフォーム対応
+
+- `confirmDialog()` (`lib/platform.ts`): Web は `window.confirm`、ネイティブは `Alert.alert` を自動切替
+- `shadow*` スタイルプロパティは RN Web で非推奨 → `boxShadow` CSS shorthand を使用
+- `edgeToEdgeEnabled: true`（Android）→ タブバー・コンテンツで SafeArea insets を適用必須
+- `softwareKeyboardLayoutMode: "pan"`（Android）→ キーボード表示時にコンテンツをパン
+
+## ナビゲーションの注意
+
+- **非同期処理後のナビゲーション**: `setTimeout(() => router.back(), 50)` で遅延（Hook の cleanup と競合回避）
+- **ユーザー操作のナビゲーション**: 即座に `router.back()`
+- **認証後のナビゲーション**: `onAuthStateChange` の `access_token` 重複チェックで二重レンダリング防止
 
 ## 認証アーキテクチャ
 
@@ -92,8 +120,7 @@ eas build --platform android --profile preview  # APKビルド
 - `_layout.tsx` で `useAuthProvider()` → `AuthContext.Provider` で全画面に共有
 - 各画面は `useAuth()` で Context から認証状態を取得（独立インスタンスは作らない）
 - 認証ガードは `app/(auth)/_layout.tsx` で一元化（個別画面での `<Redirect>` は不要）
-- Web: ページリダイレクト方式（ポップアップはCOOPでブロックされるため）
-- ネイティブ: `WebBrowser.openAuthSessionAsync` でアプリ内ブラウザ方式
+- `onAuthStateChange`: `access_token` が変わっていなければ setState をスキップ（重複防止）
 
 ## レイアウト構成
 
@@ -114,21 +141,15 @@ app/_layout.tsx          → SafeAreaProvider + Font + AuthContext + Slot
     │   ├── share.tsx      → 家族共有設定
     │   └── settings.tsx   → 設定（ログアウト・バージョン）
     ├── add.tsx            → 新規登録（Stack push、タブ非表示）
-    └── [id].tsx           → 詳細・編集（Stack push、タブ非表示）
+    └── [id].tsx           → 詳細・編集（Stack push、タブ非表示、ヘッダー戻るボタン付き）
 ```
-
-## クロスプラットフォーム対応
-
-- `Alert.alert` は Web で動作しない → `Platform.OS === "web"` で `window.confirm` / `window.alert` にフォールバック
-- `shadow*` スタイルプロパティは RN Web で非推奨 → `boxShadow` CSS shorthand を使用
-- `edgeToEdgeEnabled: true`（Android）→ タブバー・コンテンツで SafeArea insets を適用必須
-- Pressable の `style` コールバック + NativeWind `className` は Web で競合 → 確実性が必要な箇所は純粋 `style` を使用
 
 ## 現在の状態
 
-Phase 1〜4 完了（チケット01〜09）。全機能実装済み、APK ビルド・配布フロー確立済み。
+Phase 1〜6 完了。全機能実装済み、APK ビルド・配布フロー確立済み。
 - Phase 1: 環境構築、DB設計、テーマ・UI基盤、Google OAuth認証
 - Phase 2: CRUD、一覧検索、タブナビゲーション
 - Phase 3: 家族共有（招待コード、閲覧専用、共有解除）
 - Phase 4: EAS Build APK配布、セットアップ手順書
 - Phase 5: UIリデザイン（ダークネイビー × ゴールド、M PLUS Rounded 1c フォント）
+- Phase 6: リファクタリング（ErrorBanner抽出、confirmDialog統一、Hook整理、Overlays定数化、Supabase RLS/関数最適化）

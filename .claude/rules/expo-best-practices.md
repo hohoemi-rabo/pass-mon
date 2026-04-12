@@ -10,7 +10,7 @@ paths:
 
 ## ルートレイアウト構成
 
-`_layout.tsx` では以下の順序でプロバイダーをネ���トする:
+`_layout.tsx` では以下の順序でプロバイダーをネストする:
 
 ```tsx
 // app/_layout.tsx
@@ -63,12 +63,32 @@ if (isLoggedIn) return <Redirect href="/" />;
 
 **注意:** `useAuth()` の独立インスタンスを各画面で作ると、初期化タイミングのズレでリダイレクトループが発生する。必ず Context 経由で共有すること。
 
+**認証後の二重レンダリング防止:** `onAuthStateChange` で `access_token` が変わっていなければ setState をスキップする。
+
 ## ナビゲーション構成
 
 - `(auth)` グループ: Stack ナビゲーター（認証ガード付き）
 - `(tabs)` グループ: `(auth)` 内のタブナビゲーター（ホーム / 共有 / 設定）
 - `add.tsx`, `[id].tsx`: `(auth)` 直下に配置し、Stack push でタブの上に表示
+- `[id].tsx`: Header に `onBack` で戻る矢印を表示（閲覧モード時のみ）
 - タブバーは `useSafeAreaInsets().bottom` を加算して Android ナビゲーションバーとの重なりを防止
+
+## ナビゲーションパターン
+
+- **非同期処理（save/delete）後**: `setTimeout(() => router.back(), 50)` — Hook の finally ブロックが完了してから遷移
+- **ユーザー操作（キャンセル/戻る）**: 即座に `router.back()`
+- **ログイン成功後**: `onAuthStateChange` → Redirect（sign-in.tsx で `setIsLoading(false)` しない）
+
+## エラーハンドリングパターン
+
+- **Hook（`useCredentials`, `useFamilyShare`）**: 内部に `isLoading` / `error` state を持たない。エラーは throw のみ
+- **画面コンポーネント**: try-catch でキャッチし、ローカル state でエラーメッセージを管理
+- **エラー表示**: `ErrorBanner` コンポーネントを使用（個別にスタイルを書かない）
+
+## クロスプラットフォームユーティリティ
+
+- **`confirmDialog()`** (`lib/platform.ts`): 確認ダイアログ。Web は `window.confirm`、ネイティブは `Alert.alert` を自動切替。3画面で使用（削除・共有解除・ログアウト）
+- **Web 対応 Alert**: 単発の Alert も `Platform.OS === "web"` で `window.alert` にフォールバック
 
 ## セッション管理・セキュアストレージ
 
@@ -107,6 +127,6 @@ if (isLoggedIn) return <Redirect href="/" />;
 - **明示的条件レンダリング**: `{value && <Component />}` ではなく `{value ? <Component /> : null}` を使用（falsy値の意図しないレンダリング防止）
 - **早期リターン・ガード**: 外部API呼び出しの戻り値は使用前に null チェックし、無効な値で処理を続行しない
 - **React Compiler 有効**: `useMemo`/`useCallback` の手動追加は不要（自動最適化される）
-- **Web 対応 Alert**: `Alert.alert` は Web で動作しない。`Platform.OS === "web"` で `window.confirm` / `window.alert` にフォールバックすること
 - **boxShadow 使用**: `shadow*` プロパティ（shadowColor, shadowOffset 等）は RN Web で非推奨。`boxShadow` CSS shorthand を使用する
 - **NativeWind × style 競合回避**: Pressable の `style` コールバック関数と NativeWind `className` は Web で競合する場合がある。確実にスタイルを適用する必要がある箇所（Button, FAB 等）では NativeWind を使わず純粋 `style` を使用する
+- **キーボード対応**: フォーム画面では `KeyboardAvoidingView` + `ScrollView` を使用。Android は `softwareKeyboardLayoutMode: "pan"` 設定済み
