@@ -1,4 +1,4 @@
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, Platform, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { Card } from "@/components/Card";
@@ -13,6 +13,12 @@ export default function Settings() {
   const insets = useSafeAreaInsets();
 
   const handleSignOut = () => {
+    if (Platform.OS === "web") {
+      if (window.confirm("ログアウトしますか？")) {
+        signOut();
+      }
+      return;
+    }
     Alert.alert("ログアウト", "ログアウトしますか？", [
       { text: "キャンセル", style: "cancel" },
       {

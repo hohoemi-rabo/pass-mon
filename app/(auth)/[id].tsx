@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -123,23 +124,30 @@ export default function CredentialDetail() {
 
   const handleDelete = () => {
     if (!id) return;
+    const doDelete = async () => {
+      try {
+        await deleteCredential(id);
+        router.back();
+      } catch {
+        if (Platform.OS === "web") {
+          window.alert("削除に失敗しました。もう一度お試しください。");
+        } else {
+          Alert.alert("エラー", "削除に失敗しました。もう一度お試しください。");
+        }
+      }
+    };
+    if (Platform.OS === "web") {
+      if (window.confirm("この情報を削除しますか？\nこの操作は取り消せません。")) {
+        doDelete();
+      }
+      return;
+    }
     Alert.alert(
       "確認",
       "この情報を削除しますか？\nこの操作は取り消せません。",
       [
         { text: "キャンセル", style: "cancel" },
-        {
-          text: "削除",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteCredential(id);
-              router.back();
-            } catch {
-              Alert.alert("エラー", "削除に失敗しました。もう一度お試しください。");
-            }
-          },
-        },
+        { text: "削除", style: "destructive", onPress: doDelete },
       ],
     );
   };

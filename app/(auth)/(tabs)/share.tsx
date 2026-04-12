@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   ScrollView,
   Share,
   Text,
@@ -83,28 +84,33 @@ export default function ShareScreen() {
 
   const handleRevoke = () => {
     if (!myShare) return;
+    const doRevoke = async () => {
+      setActionError(null);
+      try {
+        await revokeShare(myShare.id);
+        setMyShare(null);
+      } catch (e) {
+        setActionError(
+          e instanceof Error ? e.message : "共有の解除に失敗しました",
+        );
+      }
+    };
+    if (Platform.OS === "web") {
+      if (
+        window.confirm(
+          "家族との共有を解除しますか？\n相手はあなたのアカウント情報を閲覧できなくなります。",
+        )
+      ) {
+        doRevoke();
+      }
+      return;
+    }
     Alert.alert(
       "共有を解除",
       "家族との共有を解除しますか？\n相手はあなたのアカウント情報を閲覧できなくなります。",
       [
         { text: "キャンセル", style: "cancel" },
-        {
-          text: "解除する",
-          style: "destructive",
-          onPress: async () => {
-            setActionError(null);
-            try {
-              await revokeShare(myShare.id);
-              setMyShare(null);
-            } catch (e) {
-              setActionError(
-                e instanceof Error
-                  ? e.message
-                  : "共有の解除に失敗しました",
-              );
-            }
-          },
-        },
+        { text: "解除する", style: "destructive", onPress: doRevoke },
       ],
     );
   };
