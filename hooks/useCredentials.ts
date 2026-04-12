@@ -55,18 +55,43 @@ export function useCredentials() {
   const [error, setError] = useState<string | null>(null);
 
   const listCredentials = async (): Promise<CredentialSummary[]> => {
+    if (!user) return [];
     setIsLoading(true);
     setError(null);
     try {
       const { data, error: fetchError } = await supabase
         .from("credentials")
         .select("id, service_name, account_id, created_at")
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (fetchError) throw new Error(fetchError.message);
       return data;
     } catch (e) {
       const message =
         e instanceof Error ? e.message : "データの取得に失敗しました";
+      setError(message);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /** List credentials shared by a family member (read-only) */
+  const listSharedCredentials = async (): Promise<CredentialSummary[]> => {
+    if (!user) return [];
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { data, error: fetchError } = await supabase
+        .from("credentials")
+        .select("id, service_name, account_id, created_at")
+        .neq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (fetchError) throw new Error(fetchError.message);
+      return data;
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : "共有データの取得に失敗しました";
       setError(message);
       throw e;
     } finally {
@@ -187,6 +212,7 @@ export function useCredentials() {
 
   return {
     listCredentials,
+    listSharedCredentials,
     getCredential,
     createCredential,
     updateCredential,

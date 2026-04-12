@@ -24,9 +24,12 @@ const CARD_GAP = 12;
 export default function Index() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { listCredentials } = useCredentials();
+  const { listCredentials, listSharedCredentials } = useCredentials();
 
   const [credentials, setCredentials] = useState<CredentialSummary[]>([]);
+  const [sharedCredentials, setSharedCredentials] = useState<
+    CredentialSummary[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -36,8 +39,12 @@ export default function Index() {
     if (showRefresh) setIsRefreshing(true);
     setLoadError(null);
     try {
-      const data = await listCredentials();
-      setCredentials(data);
+      const [own, shared] = await Promise.all([
+        listCredentials(),
+        listSharedCredentials(),
+      ]);
+      setCredentials(own);
+      setSharedCredentials(shared);
     } catch (e) {
       setLoadError(
         e instanceof Error ? e.message : "データの取得に失敗しました",
@@ -108,6 +115,14 @@ export default function Index() {
             searchQuery={searchQuery}
           />
         }
+        ListFooterComponent={
+          sharedCredentials.length > 0 && !searchQuery.trim() ? (
+            <SharedSection
+              items={sharedCredentials}
+              onPress={(id) => router.push(`/${id}`)}
+            />
+          ) : null
+        }
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
@@ -167,6 +182,33 @@ function EmptyState({
           ? `「${searchQuery}」に一致するサービスがありません`
           : "右下の＋ボタンから\nアカウント情報を登録しましょう"}
       </Text>
+    </View>
+  );
+}
+
+function SharedSection({
+  items,
+  onPress,
+}: {
+  items: CredentialSummary[];
+  onPress: (id: string) => void;
+}) {
+  return (
+    <View className="mt-6 gap-3">
+      <View className="flex-row items-center gap-2">
+        <Ionicons name="people" size={22} color={Colors.secondary} />
+        <Text className="text-subtitle font-bold text-text">
+          家族の共有データ
+        </Text>
+      </View>
+      {items.map((item) => (
+        <CredentialCard
+          key={item.id}
+          serviceName={item.service_name}
+          accountId={item.account_id}
+          onPress={() => onPress(item.id)}
+        />
+      ))}
     </View>
   );
 }

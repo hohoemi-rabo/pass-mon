@@ -16,6 +16,7 @@ import { TextInput } from "@/components/TextInput";
 import { Button } from "@/components/Button";
 import { PasswordField } from "@/components/PasswordField";
 import { useCredentials } from "@/hooks/useCredentials";
+import { useAuth } from "@/hooks/useAuth";
 import { Colors } from "@/constants/theme";
 import type { Credential, CredentialFormData } from "@/types/credential";
 
@@ -33,6 +34,7 @@ export default function CredentialDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
   const { getCredential, updateCredential, deleteCredential } =
     useCredentials();
 
@@ -197,6 +199,7 @@ export default function CredentialDetail() {
           ) : (
             <ViewMode
               credential={credential}
+              isOwner={credential.user_id === user?.id}
               onCopyAccountId={handleCopyAccountId}
               onEdit={() => setIsEditing(true)}
               onDelete={handleDelete}
@@ -210,11 +213,13 @@ export default function CredentialDetail() {
 
 function ViewMode({
   credential,
+  isOwner,
   onCopyAccountId,
   onEdit,
   onDelete,
 }: {
   credential: Credential;
+  isOwner: boolean;
   onCopyAccountId: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -285,10 +290,18 @@ function ViewMode({
         </Text>
       </View>
 
-      <View className="mt-4 gap-3">
-        <Button title="編集する" variant="secondary" onPress={onEdit} />
-        <Button title="削除する" variant="danger" onPress={onDelete} />
-      </View>
+      {isOwner ? (
+        <View className="mt-4 gap-3">
+          <Button title="編集する" variant="secondary" onPress={onEdit} />
+          <Button title="削除する" variant="danger" onPress={onDelete} />
+        </View>
+      ) : (
+        <View className="mt-4 rounded-button p-3" style={{ backgroundColor: Colors.secondary + "15" }}>
+          <Text className="text-center text-body" style={{ color: Colors.secondaryDark }}>
+            閲覧のみ（家族共有）
+          </Text>
+        </View>
+      )}
     </>
   );
 }

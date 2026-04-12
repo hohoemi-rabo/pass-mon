@@ -126,6 +126,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_family_invite: { Args: { code: string }; Returns: undefined }
       decrypt_credential: { Args: { cipher_text: string }; Returns: string }
       encrypt_credential: { Args: { plain_text: string }; Returns: string }
     }
