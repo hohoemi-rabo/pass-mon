@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
+import { Redirect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Button } from "@/components/Button";
 import { signInWithGoogle } from "@/lib/auth";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function SignIn() {
+  const { isLoggedIn } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  if (isLoggedIn) {
+    return <Redirect href="/" />;
+  }
 
   const handleSignIn = async () => {
     try {
@@ -15,7 +22,9 @@ export default function SignIn() {
       await signInWithGoogle();
     } catch (e) {
       setError(
-        e instanceof Error ? e.message : "ログインに失敗しました。もう一度お試しください。",
+        e instanceof Error
+          ? e.message
+          : "ログインに失敗しました。もう一度お試しください。",
       );
     } finally {
       setIsLoading(false);

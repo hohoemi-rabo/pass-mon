@@ -1,10 +1,15 @@
 import { Text, View } from "react-native";
+import { Redirect } from "expo-router";
 import { Button } from "@/components/Button";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Index() {
-  const { user, signOut } = useAuth();
+  const { user, isLoggedIn, signOut } = useAuth();
+
+  if (!isLoggedIn) {
+    return <Redirect href="/sign-in" />;
+  }
 
   return (
     <View className="flex-1 bg-background">
