@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
@@ -192,6 +193,11 @@ export default function CredentialDetail() {
       style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
     >
       <Header title={isEditing ? "編集中" : credential.service_name} />
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={insets.top + 40}
+      >
       <ScrollView
         className="flex-1 px-4"
         contentContainerStyle={{ paddingBottom: 32 }}
@@ -219,6 +225,7 @@ export default function CredentialDetail() {
           )}
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
