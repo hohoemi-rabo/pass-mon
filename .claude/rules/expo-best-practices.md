@@ -8,24 +8,46 @@ paths:
 
 # Expo (SDK 54) ベストプラクティス
 
+## ルートレイアウト構成
+
+`_layout.tsx` では以下の順序でプロバイダーをネストする:
+
+```tsx
+// app/_layout.tsx
+export default function RootLayout() {
+  const auth = useAuthProvider();
+  if (auth.isLoading) {
+    return (
+      <SafeAreaProvider>
+        <LoadingSpinner />
+      </SafeAreaProvider>
+    );
+  }
+  return (
+    <SafeAreaProvider>
+      <StatusBar style="dark" />
+      <AuthContext.Provider value={auth}>
+        <Slot />
+      </AuthContext.Provider>
+    </SafeAreaProvider>
+  );
+}
+```
+
+- `SafeAreaProvider` は最外層に配置（ローディング画面含む全パスで必要）
+- `StatusBar` は背景色 `#FFF8F0` に合わせて `style="dark"`
+- 早期リターン（ローディング等）でも `SafeAreaProvider` を忘れないこと
+
+## SafeArea の適用
+
+- 各画面で `useSafeAreaInsets()` を使い、ノッチ・ステータスバー領域を動的に回避
+- `SafeAreaView` よりも `useSafeAreaInsets()` + `style={{ paddingTop: insets.top }}` を推奨（柔軟性が高い）
+
 ## 認証と保護ルート
 
 認証状態は `AuthContext` で一元管理。`_layout.tsx` で `useAuthProvider()` を呼び、Provider で子に共有する。各画面では `useAuth()` で Context から読み取り、未認証時は `<Redirect>` でガードする。
 
 ```tsx
-// app/_layout.tsx
-import { AuthContext, useAuthProvider } from '@/hooks/useAuth';
-
-export default function RootLayout() {
-  const auth = useAuthProvider();
-  if (auth.isLoading) return <LoadingSpinner />;
-  return (
-    <AuthContext.Provider value={auth}>
-      <Slot />
-    </AuthContext.Provider>
-  );
-}
-
 // app/index.tsx（認証必須画面）
 const { isLoggedIn } = useAuth();
 if (!isLoggedIn) return <Redirect href="/sign-in" />;
@@ -67,3 +89,10 @@ if (isLoggedIn) return <Redirect href="/" />;
 - `react-native-reanimated` v4 でUIスレッドアニメーション
 - FlatList の `keyExtractor`, `getItemLayout` を適切に設定してリスト性能を確保
 - `newArchEnabled: true`（有効化済み）で新アーキテクチャの恩恵を受ける
+
+## コーディング規約（React Best Practices 準拠）
+
+- **バレルインポート禁止**: `import { X } from "@expo/vector-icons"` ではなく `import X from "@expo/vector-icons/X"` で直接インポート（バンドルサイズ削減）
+- **明示的条件レンダリング**: `{value && <Component />}` ではなく `{value ? <Component /> : null}` を使用（falsy値の意図しないレンダリング防止）
+- **早期リターン・ガード**: 外部API呼び出しの戻り値は使用前に null チェックし、無効な値で処理を続行しない
+- **React Compiler 有効**: `useMemo`/`useCallback` の手動追加は不要（自動最適化される）

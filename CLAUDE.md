@@ -71,6 +71,12 @@ eas build --platform android --profile preview  # APKビルド
 - Web: ページリダイレクト方式（ポップアップはCOOPでブロックされるため）
 - ネイティブ: `WebBrowser.openAuthSessionAsync` でアプリ内ブラウザ方式
 
+## レイアウト構成
+
+- `_layout.tsx` で `SafeAreaProvider` + `StatusBar`（style="dark"）をルートに配置
+- 各画面で `useSafeAreaInsets()` を使い、ノッチ・ステータスバー領域を動的に回避
+- ローディング画面にも `SafeAreaProvider` を適用（早期リターン時の表示崩れ防止）
+
 ## 現在の状態
 
 Phase 1 完了（チケット01〜04）。環境構築、DB設計、テーマ・UI基盤、Google OAuth認証が実装済み。CRUD・一覧検索・ナビゲーション等のPhase 2機能は未実装。
