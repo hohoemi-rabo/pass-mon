@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **フロントエンド:** Expo 54 (React Native 0.81) + React 19 + TypeScript 5.9
 - **ルーティング:** Expo Router 6（ファイルベース、型付きルート有効）
-- **スタイリング:** NativeWind (Tailwind CSS)（導入予定、現時点は StyleSheet）
+- **スタイリング:** NativeWind (Tailwind CSS)
 - **バックエンド/DB:** Supabase (PostgreSQL) — MCP接続設定済み
 - **認証:** Supabase Auth (Google OAuth) via expo-auth-session
 - **暗号化:** Supabase pgcrypto (AES-256サーバーサイド暗号化)
@@ -48,7 +48,7 @@ eas build --platform android --profile preview  # APKビルド
 `.mcp.json` でSupabase MCPサーバーが設定済み。`mcp__supabase__*` ツールでDB操作・マイグレーション・SQL実行が可能。
 
 - 組織: `masa-portfolio`
-- プロジェクト: `game-scope` (ID: `vhuhazlgqmuihejpiuyy`, リージョン: ap-northeast-1)
+- プロジェクト: `pass-mon` (ID: `yvkypckatrheteehwkgh`, リージョン: ap-northeast-1)
 
 ## ルール分割（.claude/rules/）
 
@@ -64,4 +64,4 @@ eas build --platform android --profile preview  # APKビルド
 
 ## 現在の状態
 
-Expoテンプレートのスキャフォールディング段階。認証・CRUD・暗号化などのコア機能は未実装。
+環境構築完了（チケット01）。NativeWind, Supabase クライアント, EAS Build 設定済み。認証・CRUD・暗号化などのコア機能は未実装。
