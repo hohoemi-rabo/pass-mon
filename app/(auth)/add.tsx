@@ -154,7 +154,7 @@ export default function AddCredential() {
             <Button
               title="キャンセル"
               variant="secondary"
-              onPress={() => router.canGoBack() ? router.back() : router.replace("/")}
+              onPress={() => router.back()}
               disabled={isSaving}
             />
           </View>

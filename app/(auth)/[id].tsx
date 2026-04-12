@@ -128,11 +128,7 @@ export default function CredentialDetail() {
     const doDelete = async () => {
       try {
         await deleteCredential(id);
-        if (router.canGoBack()) {
-          router.back();
-        } else {
-          router.replace("/");
-        }
+        setTimeout(() => router.back(), 50);
       } catch {
         if (Platform.OS === "web") {
           window.alert("削除に失敗しました。もう一度お試しください。");
@@ -181,7 +177,7 @@ export default function CredentialDetail() {
           <Text className="mb-4 text-center text-body text-danger">
             {loadError ?? "データが見つかりませんでした"}
           </Text>
-          <Button title="戻る" variant="secondary" onPress={() => router.canGoBack() ? router.back() : router.replace("/")} />
+          <Button title="戻る" variant="secondary" onPress={() => router.back()} />
         </View>
       </View>
     );
