@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
-import type { Credential, CredentialFormData } from "@/types/credential";
+import type {
+  Credential,
+  CredentialFormData,
+  CredentialSummary,
+} from "@/types/credential";
 import type { Tables } from "@/types/database";
 
 type CredentialRow = Tables<"credentials">;
@@ -49,6 +53,26 @@ export function useCredentials() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const listCredentials = async (): Promise<CredentialSummary[]> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { data, error: fetchError } = await supabase
+        .from("credentials")
+        .select("id, service_name, account_id, created_at")
+        .order("created_at", { ascending: false });
+      if (fetchError) throw new Error(fetchError.message);
+      return data;
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : "データの取得に失敗しました";
+      setError(message);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getCredential = async (id: string): Promise<Credential> => {
     setIsLoading(true);
@@ -162,6 +186,7 @@ export function useCredentials() {
   };
 
   return {
+    listCredentials,
     getCredential,
     createCredential,
     updateCredential,

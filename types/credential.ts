@@ -11,6 +11,14 @@ export type Credential = {
   updated_at: string;
 };
 
+/** Summary for list display (no sensitive data) */
+export type CredentialSummary = {
+  id: string;
+  service_name: string;
+  account_id: string | null;
+  created_at: string;
+};
+
 /** Form input for creating/updating a credential */
 export type CredentialFormData = {
   service_name: string;
