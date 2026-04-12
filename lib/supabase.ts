@@ -8,12 +8,14 @@ import type { Database } from "@/types/database";
 const SecureStoreAdapter = {
   getItem: (key: string) => {
     if (Platform.OS === "web") {
+      if (typeof localStorage === "undefined") return null;
       return localStorage.getItem(key);
     }
     return SecureStore.getItemAsync(key);
   },
   setItem: (key: string, value: string) => {
     if (Platform.OS === "web") {
+      if (typeof localStorage === "undefined") return;
       localStorage.setItem(key, value);
       return;
     }
@@ -21,6 +23,7 @@ const SecureStoreAdapter = {
   },
   removeItem: (key: string) => {
     if (Platform.OS === "web") {
+      if (typeof localStorage === "undefined") return;
       localStorage.removeItem(key);
       return;
     }
