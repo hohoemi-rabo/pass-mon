@@ -21,13 +21,13 @@ export default function SignIn() {
       setError(null);
       setIsLoading(true);
       await signInWithGoogle();
+      // Success: onAuthStateChange will trigger Redirect, no setState needed
     } catch (e) {
       setError(
         e instanceof Error
           ? e.message
           : "ログインに失敗しました。もう一度お試しください。",
       );
-    } finally {
       setIsLoading(false);
     }
   };

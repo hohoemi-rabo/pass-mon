@@ -72,10 +72,16 @@ export function useAuthProvider(): AuthContextValue {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setState({
-        session,
-        user: session?.user ?? null,
-        isLoading: false,
+      setState((prev) => {
+        // Skip update if session hasn't actually changed
+        const prevToken = prev.session?.access_token;
+        const newToken = session?.access_token;
+        if (prevToken === newToken && !prev.isLoading) return prev;
+        return {
+          session,
+          user: session?.user ?? null,
+          isLoading: false,
+        };
       });
     });
 
