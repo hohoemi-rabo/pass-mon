@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Transparent background - Android uses separate background layer -->
+  <!-- Key icon centered with adaptive icon safe zone (inner 66%) -->
+  <g transform="translate(512, 470)" fill="none" stroke="#D4A056" stroke-width="52" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Key head (circle) -->
+    <circle cx="0" cy="-70" r="100" fill="none"/>
+    <!-- Key shaft -->
+    <line x1="0" y1="30" x2="0" y2="240"/>
+    <!-- Key teeth -->
+    <line x1="0" y1="175" x2="55" y2="175"/>
+    <line x1="0" y1="220" x2="40" y2="220"/>
+  </g>
+</svg>

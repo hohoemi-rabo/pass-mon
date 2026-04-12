@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Monochrome: white key on transparent, Android applies tint -->
+  <g transform="translate(512, 470)" fill="none" stroke="#FFFFFF" stroke-width="52" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="0" cy="-70" r="100" fill="none"/>
+    <line x1="0" y1="30" x2="0" y2="240"/>
+    <line x1="0" y1="175" x2="55" y2="175"/>
+    <line x1="0" y1="220" x2="40" y2="220"/>
+  </g>
+</svg>

@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: "com.hohoemilabo.passmon",
     adaptiveIcon: {
-      backgroundColor: "#E6F4FE",
+      backgroundColor: "#091b36",
       foregroundImage: "./assets/images/android-icon-foreground.png",
       backgroundImage: "./assets/images/android-icon-background.png",
       monochromeImage: "./assets/images/android-icon-monochrome.png",
@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         image: "./assets/images/splash-icon.png",
         imageWidth: 200,
         resizeMode: "contain",
-        backgroundColor: "#FFF8F0",
+        backgroundColor: "#091b36",
       },
     ],
     "expo-secure-store",

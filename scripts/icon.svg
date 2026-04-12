@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="#091b36"/>
+  <!-- Subtle circle ring -->
+  <circle cx="512" cy="512" r="340" fill="rgba(212,160,86,0.1)" stroke="rgba(212,160,86,0.25)" stroke-width="6"/>
+  <!-- Key icon (simplified) -->
+  <g transform="translate(512, 480)" fill="none" stroke="#D4A056" stroke-width="48" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Key head (circle) -->
+    <circle cx="0" cy="-80" r="110" fill="none"/>
+    <!-- Key shaft -->
+    <line x1="0" y1="30" x2="0" y2="260"/>
+    <!-- Key teeth -->
+    <line x1="0" y1="190" x2="60" y2="190"/>
+    <line x1="0" y1="240" x2="45" y2="240"/>
+  </g>
+</svg>

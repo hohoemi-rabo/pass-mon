@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <!-- Background with rounded corners -->
+  <rect width="48" height="48" rx="8" fill="#091b36"/>
+  <!-- Key icon (simplified for small size) -->
+  <g transform="translate(24, 21)" fill="none" stroke="#D4A056" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="0" cy="-4" r="6" fill="none"/>
+    <line x1="0" y1="2" x2="0" y2="16"/>
+    <line x1="0" y1="12" x2="4" y2="12"/>
+    <line x1="0" y1="15" x2="3" y2="15"/>
+  </g>
+</svg>
