@@ -123,7 +123,9 @@ if (isLoggedIn) return <Redirect href="/" />;
 - `react-native-reanimated` v4 でUIスレッドアニメーション
 - FlatList の `keyExtractor`, `getItemLayout` を適切に設定してリスト性能を確保
 - ホーム一覧は `DraggableFlatList`（`react-native-draggable-flatlist`）で長押しドラッグ並び替え対応。検索中は通常 `FlatList` にフォールバック
-- `credentials` テーブルの `display_order` カラムで並び順を永続化（`display_order ASC` でソート、新規作成は `display_order: 0` でリスト先頭）
+- `credentials` / `anshin_memos` テーブルの `display_order` カラムで並び順を永続化（`display_order ASC` でソート、新規作成は `display_order: 0` でリスト先頭）
+- ホーム画面は `SegmentControl` でパスワード/あんしんメモを切替。セグメントごとに独立した検索・ドラッグ・FAB遷移先
+- あんしんメモの `body_encrypted` は一覧で取得せず、詳細画面でのみ復号（一覧のパフォーマンス確保）
 - `newArchEnabled: true`（有効化済み）で新アーキテクチャの恩恵を受ける
 
 ## コーディング規約（React Best Practices 準拠）

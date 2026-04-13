@@ -18,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **バックエンド/DB:** Supabase (PostgreSQL) — MCP接続設定済み
 - **認証:** Supabase Auth (Google OAuth) via expo-auth-session
 - **暗号化:** Supabase pgcrypto (AES-256サーバーサイド暗号化)
-- **配布:** EAS Build → APK直接配布 (Android) / TestFlight (iOS)
+- **配布:** EAS Build → APK直接配布 (Android) / TestFlight (iOS) / Vercel (Web)
 - **アニメーション:** react-native-reanimated v4
 - **リスト並び替え:** react-native-draggable-flatlist（長押しドラッグ&ドロップ）
 
@@ -32,6 +32,7 @@ npx expo start --web      # Web
 npx expo lint             # リント
 npx expo lint --fix       # リント自動修正
 eas build --platform android --profile preview  # APKビルド
+npx expo export --platform web                  # Web静的エクスポート（Vercelデプロイ用）
 ```
 
 ## アーキテクチャ
@@ -91,6 +92,8 @@ eas build --platform android --profile preview  # APKビルド
 - **Button** (`components/Button.tsx`): `primary` / `secondary` / `danger` の3バリアント
 - **TextInput** (`components/TextInput.tsx`): `secureTextEntry` 時にパスワード表示切替アイコン付き。プレースホルダーは `Colors.placeholder` で薄く表示
 - **CredentialCard** (`components/CredentialCard.tsx`): `drag`/`isActive` props でドラッグ対応。アカウントID未設定時はサブテキスト非表示
+- **AnshinMemoCard** (`components/AnshinMemoCard.tsx`): タイトルのみ表示（本文は暗号化のため一覧では非表示）。heart アイコンで視覚的に差別化
+- **SegmentControl** (`components/SegmentControl.tsx`): ホーム画面のパスワード/あんしんメモ切替用セグメントコントロール
 
 ### NativeWind × style の注意
 
@@ -99,7 +102,7 @@ eas build --platform android --profile preview  # APKビルド
 
 ## エラーハンドリングパターン
 
-- **Hook（`useCredentials`, `useFamilyShare`）**: throw のみ。内部に `isLoading` / `error` state を持たない
+- **Hook（`useCredentials`, `useFamilyShare`, `useAnshinMemos`）**: throw のみ。内部に `isLoading` / `error` state を持たない
 - **画面コンポーネント**: try-catch でキャッチし、ローカル state でエラーメッセージを管理
 - **エラー表示**: `ErrorBanner` コンポーネントを使用
 
@@ -139,11 +142,13 @@ app/_layout.tsx          → GestureHandlerRootView + SafeAreaProvider + Font + 
 ├── sign-in.tsx          → 未認証用（ルート直下）
 └── (auth)/_layout.tsx   → 認証ガード + Stack
     ├── (tabs)/_layout.tsx → Tabs（ホーム / 共有 / 設定）
-    │   ├── index.tsx      → ホーム一覧（DraggableFlatList + 検索 + FAB）
+    │   ├── index.tsx      → ホーム（セグメント切替: パスワード / あんしんメモ）
     │   ├── share.tsx      → 家族共有設定
     │   └── settings.tsx   → 設定（ログアウト・バージョン）
-    ├── add.tsx            → 新規登録（Stack push、タブ非表示）
-    └── [id].tsx           → 詳細・編集（Stack push、タブ非表示、ヘッダー戻るボタン付き）
+    ├── add.tsx            → パスワード新規登録（Stack push、タブ非表示）
+    ├── [id].tsx           → パスワード詳細・編集（Stack push、タブ非表示）
+    ├── memo/add.tsx       → あんしんメモ新規登録（Stack push、タブ非表示）
+    └── memo/[id].tsx      → あんしんメモ詳細・編集（Stack push、タブ非表示）
 ```
 
 ## チケット TODO 管理
@@ -153,12 +158,22 @@ app/_layout.tsx          → GestureHandlerRootView + SafeAreaProvider + Font + 
 - **タスクが完了したら即座に `- [ ]` を `- [x]` に更新すること**
 - チケット内の全タスクが完了したら、ファイル先頭の `#` タイトルの後に `[DONE]` を付与
 
+## Web デプロイ（Vercel）
+
+- `vercel.json` で SPA リライト設定済み（全ルートを `/index.html` にリライト）
+- ビルドコマンド: `npx expo export --platform web`、出力: `dist`
+- 環境変数: `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY` を Vercel に設定
+- Supabase Redirect URL と Google OAuth に Vercel ドメインを追加済み
+- GitHub プッシュで自動デプロイ
+
 ## 現在の状態
 
-Phase 1〜6 完了。全機能実装済み、APK ビルド・配布フロー確立済み。
+Phase 1（v1）完了 + Phase 2（あんしんメモ）実装済み。APK ビルド・Vercel Web デプロイ確立済み。
 - Phase 1: 環境構築、DB設計、テーマ・UI基盤、Google OAuth認証
 - Phase 2: CRUD、一覧検索、タブナビゲーション
 - Phase 3: 家族共有（招待コード、閲覧専用、共有解除）
 - Phase 4: EAS Build APK配布、セットアップ手順書
 - Phase 5: UIリデザイン（ダークネイビー × ゴールド、M PLUS Rounded 1c フォント）
 - Phase 6: リファクタリング（ErrorBanner抽出、confirmDialog統一、Hook整理、Overlays定数化、Supabase RLS/関数最適化）
+- Phase 7: あんしんメモ機能（DB・暗号化・セグメントコントロール・CRUD・家族共有閲覧）
+- Vercel Web デプロイ（iPhone ブラウザ対応）
