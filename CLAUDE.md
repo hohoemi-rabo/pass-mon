@@ -42,7 +42,7 @@ eas build --platform android --profile preview  # APKビルド
 - `lib/` — ユーティリティ（`supabase.ts`, `auth.ts`, `platform.ts`）
 - `constants/` — テーマ・定数（`theme.ts` に `Colors`, `Overlays`, `FontFamily` 等）
 - `types/` — TypeScript型定義
-- `docs/` — 開発チケット（タスク管理）
+- `docs/` — 開発チケット（タスク管理、連番ファイル `0XX_*.md`）
 - `scripts/` — アイコン生成スクリプト（SVGソース + sharp変換）
 - `tsconfig.json` で `@/*` → プロジェクトルートのパスエイリアス設定済み
 
@@ -145,6 +145,13 @@ app/_layout.tsx          → GestureHandlerRootView + SafeAreaProvider + Font + 
     ├── add.tsx            → 新規登録（Stack push、タブ非表示）
     └── [id].tsx           → 詳細・編集（Stack push、タブ非表示、ヘッダー戻るボタン付き）
 ```
+
+## チケット TODO 管理
+
+- `docs/` 配下のチケットファイル（`0XX_*.md`）で開発タスクを管理
+- 未着手: `- [ ]` / 完了: `- [x]`
+- **タスクが完了したら即座に `- [ ]` を `- [x]` に更新すること**
+- チケット内の全タスクが完了したら、ファイル先頭の `#` タイトルの後に `[DONE]` を付与
 
 ## 現在の状態
 
