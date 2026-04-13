@@ -16,7 +16,7 @@ export type Database = {
     Tables: {
       anshin_memos: {
         Row: {
-          body: string
+          body_encrypted: string
           created_at: string
           display_order: number
           id: string
@@ -25,7 +25,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          body: string
+          body_encrypted: string
           created_at?: string
           display_order?: number
           id?: string
@@ -34,7 +34,7 @@ export type Database = {
           user_id: string
         }
         Update: {
-          body?: string
+          body_encrypted?: string
           created_at?: string
           display_order?: number
           id?: string

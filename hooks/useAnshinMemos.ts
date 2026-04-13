@@ -6,6 +6,22 @@ import type {
   AnshinMemoSummary,
 } from "@/types/anshinMemo";
 
+async function encryptField(plainText: string): Promise<string> {
+  const { data, error } = await supabase.rpc("encrypt_credential", {
+    plain_text: plainText,
+  });
+  if (error) throw new Error(`暗号化に失敗しました: ${error.message}`);
+  return data;
+}
+
+async function decryptField(cipherText: string): Promise<string> {
+  const { data, error } = await supabase.rpc("decrypt_credential", {
+    cipher_text: cipherText,
+  });
+  if (error) throw new Error(`復号に失敗しました: ${error.message}`);
+  return data;
+}
+
 export function useAnshinMemos() {
   const { user } = useAuth();
 
@@ -13,7 +29,7 @@ export function useAnshinMemos() {
     if (!user) return [];
     const { data, error } = await supabase
       .from("anshin_memos")
-      .select("id, title, body, display_order, created_at")
+      .select("id, title, display_order, created_at")
       .eq("user_id", user.id)
       .order("display_order", { ascending: true });
     if (error) throw new Error(error.message);
@@ -24,7 +40,7 @@ export function useAnshinMemos() {
     if (!user) return [];
     const { data, error } = await supabase
       .from("anshin_memos")
-      .select("id, title, body, display_order, created_at")
+      .select("id, title, display_order, created_at")
       .neq("user_id", user.id)
       .order("display_order", { ascending: true });
     if (error) throw new Error(error.message);
@@ -38,7 +54,17 @@ export function useAnshinMemos() {
       .eq("id", id)
       .single();
     if (error) throw new Error(error.message);
-    return data;
+
+    const body = await decryptField(data.body_encrypted);
+    return {
+      id: data.id,
+      user_id: data.user_id,
+      title: data.title,
+      body,
+      display_order: data.display_order,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    };
   };
 
   const createAnshinMemo = async (
@@ -46,35 +72,57 @@ export function useAnshinMemos() {
   ): Promise<AnshinMemo> => {
     if (!user) throw new Error("ログインが必要です");
 
+    const bodyEncrypted = await encryptField(form.body.trim());
+
     const { data, error } = await supabase
       .from("anshin_memos")
       .insert({
         user_id: user.id,
         title: form.title.trim(),
-        body: form.body.trim(),
+        body_encrypted: bodyEncrypted,
         display_order: 0,
       })
       .select()
       .single();
     if (error) throw new Error(error.message);
-    return data;
+
+    return {
+      id: data.id,
+      user_id: data.user_id,
+      title: data.title,
+      body: form.body.trim(),
+      display_order: data.display_order,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    };
   };
 
   const updateAnshinMemo = async (
     id: string,
     form: AnshinMemoFormData,
   ): Promise<AnshinMemo> => {
+    const bodyEncrypted = await encryptField(form.body.trim());
+
     const { data, error } = await supabase
       .from("anshin_memos")
       .update({
         title: form.title.trim(),
-        body: form.body.trim(),
+        body_encrypted: bodyEncrypted,
       })
       .eq("id", id)
       .select()
       .single();
     if (error) throw new Error(error.message);
-    return data;
+
+    return {
+      id: data.id,
+      user_id: data.user_id,
+      title: data.title,
+      body: form.body.trim(),
+      display_order: data.display_order,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    };
   };
 
   const updateAnshinMemoOrder = async (

@@ -5,7 +5,6 @@ import { Colors } from "@/constants/theme";
 
 interface AnshinMemoCardProps {
   title: string;
-  body: string;
   onPress: () => void;
   drag?: () => void;
   isActive?: boolean;
@@ -13,7 +12,6 @@ interface AnshinMemoCardProps {
 
 export function AnshinMemoCard({
   title,
-  body,
   onPress,
   drag,
   isActive,
@@ -56,19 +54,12 @@ export function AnshinMemoCard({
             color={Colors.secondary}
             style={{ marginRight: 12 }}
           />
-          <View className="flex-1 gap-1">
+          <View className="flex-1">
             <Text
               className="text-text"
               style={{ fontSize: 18, fontWeight: "700" }}
             >
               {title}
-            </Text>
-            <Text
-              className="text-subtext"
-              style={{ fontSize: 16 }}
-              numberOfLines={2}
-            >
-              {body}
             </Text>
           </View>
           <Ionicons

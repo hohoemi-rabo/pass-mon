@@ -374,7 +374,7 @@ function MemoList({
   }: RenderItemParams<AnshinMemoSummary>) => (
     <AnshinMemoCard
       title={item.title}
-      body={item.body}
+
       onPress={() => router.push(`/memo/${item.id}`)}
       drag={isSearching ? undefined : drag}
       isActive={isActive}
@@ -395,7 +395,7 @@ function MemoList({
         renderItem={({ item }) => (
           <AnshinMemoCard
             title={item.title}
-            body={item.body}
+      
             onPress={() => router.push(`/memo/${item.id}`)}
           />
         )}
@@ -523,7 +523,7 @@ function SharedMemoSection({
         <AnshinMemoCard
           key={item.id}
           title={item.title}
-          body={item.body}
+    
           onPress={() => onPress(item.id)}
         />
       ))}

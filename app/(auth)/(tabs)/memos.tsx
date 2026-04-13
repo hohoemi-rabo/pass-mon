@@ -101,7 +101,7 @@ export default function MemosScreen() {
   }: RenderItemParams<AnshinMemoSummary>) => (
     <AnshinMemoCard
       title={item.title}
-      body={item.body}
+
       onPress={() => router.push(`/memo/${item.id}`)}
       drag={isSearching ? undefined : drag}
       isActive={isActive}
@@ -144,7 +144,7 @@ export default function MemosScreen() {
           renderItem={({ item }) => (
             <AnshinMemoCard
               title={item.title}
-              body={item.body}
+        
               onPress={() => router.push(`/memo/${item.id}`)}
             />
           )}
@@ -265,7 +265,7 @@ function SharedSection({
         <AnshinMemoCard
           key={item.id}
           title={item.title}
-          body={item.body}
+    
           onPress={() => onPress(item.id)}
         />
       ))}
