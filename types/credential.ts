@@ -16,6 +16,7 @@ export type CredentialSummary = {
   id: string;
   service_name: string;
   account_id: string | null;
+  display_order: number;
   created_at: string;
 };
 

@@ -26,6 +26,7 @@ export const Colors = {
   border: "#1A3556",
   inputBorder: "#2A4A6E",
   inputFocus: "#D4A056",
+  placeholder: "#4A6A8C",
   tabBar: "#061527",
 } as const;
 

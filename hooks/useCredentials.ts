@@ -51,9 +51,9 @@ export function useCredentials() {
     if (!user) return [];
     const { data, error } = await supabase
       .from("credentials")
-      .select("id, service_name, account_id, created_at")
+      .select("id, service_name, account_id, display_order, created_at")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .order("display_order", { ascending: true });
     if (error) throw new Error(error.message);
     return data;
   };
@@ -62,9 +62,9 @@ export function useCredentials() {
     if (!user) return [];
     const { data, error } = await supabase
       .from("credentials")
-      .select("id, service_name, account_id, created_at")
+      .select("id, service_name, account_id, display_order, created_at")
       .neq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .order("display_order", { ascending: true });
     if (error) throw new Error(error.message);
     return data;
   };
@@ -98,6 +98,7 @@ export function useCredentials() {
         password_encrypted: passwordEncrypted,
         pin_encrypted: pinEncrypted,
         memo: form.memo.trim() || null,
+        display_order: 0,
       })
       .select()
       .single();
@@ -129,6 +130,20 @@ export function useCredentials() {
     return await getCredential(id);
   };
 
+  const updateCredentialOrder = async (
+    items: { id: string; display_order: number }[],
+  ): Promise<void> => {
+    const updates = items.map((item) =>
+      supabase
+        .from("credentials")
+        .update({ display_order: item.display_order })
+        .eq("id", item.id),
+    );
+    const results = await Promise.all(updates);
+    const failed = results.find((r) => r.error);
+    if (failed?.error) throw new Error(failed.error.message);
+  };
+
   const deleteCredential = async (id: string): Promise<void> => {
     const { error } = await supabase
       .from("credentials")
@@ -143,6 +158,7 @@ export function useCredentials() {
     getCredential,
     createCredential,
     updateCredential,
+    updateCredentialOrder,
     deleteCredential,
   };
 }

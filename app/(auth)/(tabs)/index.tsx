@@ -9,6 +9,9 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
+import DraggableFlatList, {
+  type RenderItemParams,
+} from "react-native-draggable-flatlist";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
@@ -25,7 +28,8 @@ const CARD_GAP = 12;
 export default function Index() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { listCredentials, listSharedCredentials } = useCredentials();
+  const { listCredentials, listSharedCredentials, updateCredentialOrder } =
+    useCredentials();
 
   const [credentials, setCredentials] = useState<CredentialSummary[]>([]);
   const [sharedCredentials, setSharedCredentials] = useState<
@@ -63,11 +67,53 @@ export default function Index() {
     }, []),
   );
 
-  const filtered = searchQuery.trim()
+  const isSearching = searchQuery.trim().length > 0;
+
+  const filtered = isSearching
     ? credentials.filter((c) =>
         c.service_name.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     : credentials;
+
+  const handleDragEnd = async ({
+    data,
+  }: {
+    data: CredentialSummary[];
+  }) => {
+    const reordered = data.map((item, index) => ({
+      ...item,
+      display_order: index,
+    }));
+    setCredentials(reordered);
+
+    try {
+      await updateCredentialOrder(
+        reordered.map((item) => ({
+          id: item.id,
+          display_order: item.display_order,
+        })),
+      );
+    } catch (e) {
+      setLoadError(
+        e instanceof Error ? e.message : "並び替えの保存に失敗しました",
+      );
+      fetchList();
+    }
+  };
+
+  const renderItem = ({
+    item,
+    drag,
+    isActive,
+  }: RenderItemParams<CredentialSummary>) => (
+    <CredentialCard
+      serviceName={item.service_name}
+      accountId={item.account_id}
+      onPress={() => router.push(`/${item.id}`)}
+      drag={isSearching ? undefined : drag}
+      isActive={isActive}
+    />
+  );
 
   if (isLoading) {
     return (
@@ -88,50 +134,68 @@ export default function Index() {
         <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
       </View>
 
-      <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id}
-        getItemLayout={(_, index) => ({
-          length: CARD_HEIGHT + CARD_GAP,
-          offset: (CARD_HEIGHT + CARD_GAP) * index,
-          index,
-        })}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: 100,
-          flexGrow: filtered.length === 0 ? 1 : undefined,
-        }}
-        ItemSeparatorComponent={() => <View style={{ height: CARD_GAP }} />}
-        renderItem={({ item }) => (
-          <CredentialCard
-            serviceName={item.service_name}
-            accountId={item.account_id}
-            onPress={() => router.push(`/${item.id}`)}
-          />
-        )}
-        ListEmptyComponent={
-          <EmptyState
-            hasCredentials={credentials.length > 0}
-            searchQuery={searchQuery}
-          />
-        }
-        ListFooterComponent={
-          sharedCredentials.length > 0 && !searchQuery.trim() ? (
-            <SharedSection
-              items={sharedCredentials}
-              onPress={(id) => router.push(`/${id}`)}
+      {isSearching ? (
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item.id}
+          getItemLayout={(_, index) => ({
+            length: CARD_HEIGHT + CARD_GAP,
+            offset: (CARD_HEIGHT + CARD_GAP) * index,
+            index,
+          })}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: 100,
+            flexGrow: filtered.length === 0 ? 1 : undefined,
+          }}
+          ItemSeparatorComponent={() => <View style={{ height: CARD_GAP }} />}
+          renderItem={({ item }) => (
+            <CredentialCard
+              serviceName={item.service_name}
+              accountId={item.account_id}
+              onPress={() => router.push(`/${item.id}`)}
             />
-          ) : null
-        }
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={() => fetchList(true)}
-            colors={[Colors.primary]}
-            tintColor={Colors.primary}
-          />
-        }
-      />
+          )}
+          ListEmptyComponent={
+            <EmptyState hasCredentials={true} searchQuery={searchQuery} />
+          }
+        />
+      ) : (
+        <DraggableFlatList
+          data={filtered}
+          keyExtractor={(item) => item.id}
+          onDragEnd={handleDragEnd}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: 100,
+            flexGrow: filtered.length === 0 ? 1 : undefined,
+          }}
+          ItemSeparatorComponent={() => <View style={{ height: CARD_GAP }} />}
+          renderItem={renderItem}
+          ListEmptyComponent={
+            <EmptyState
+              hasCredentials={credentials.length > 0}
+              searchQuery={searchQuery}
+            />
+          }
+          ListFooterComponent={
+            sharedCredentials.length > 0 ? (
+              <SharedSection
+                items={sharedCredentials}
+                onPress={(id) => router.push(`/${id}`)}
+              />
+            ) : null
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={() => fetchList(true)}
+              colors={[Colors.primary]}
+              tintColor={Colors.primary}
+            />
+          }
+        />
+      )}
 
       {loadError ? (
         <View className="absolute bottom-24 left-4 right-4">

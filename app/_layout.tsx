@@ -2,6 +2,7 @@ import "../global.css";
 import { ActivityIndicator, Text, View } from "react-native";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   useFonts,
@@ -47,11 +48,13 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <StatusBar style="light" />
-      <AuthContext.Provider value={auth}>
-        <Slot />
-      </AuthContext.Provider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar style="light" />
+        <AuthContext.Provider value={auth}>
+          <Slot />
+        </AuthContext.Provider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

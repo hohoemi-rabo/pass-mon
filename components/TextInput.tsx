@@ -27,7 +27,7 @@ export function TextInput({ label, style, secureTextEntry, ...props }: TextInput
       >
         <RNTextInput
           className="h-[52px] flex-1 px-4 text-body text-text"
-          placeholderTextColor={Colors.subtext}
+          placeholderTextColor={Colors.placeholder}
           secureTextEntry={secureTextEntry && !isSecureVisible}
           onFocus={(e) => {
             setIsFocused(true);
