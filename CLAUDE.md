@@ -20,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **暗号化:** Supabase pgcrypto (AES-256サーバーサイド暗号化)
 - **配布:** EAS Build → APK直接配布 (Android) / TestFlight (iOS)
 - **アニメーション:** react-native-reanimated v4
+- **リスト並び替え:** react-native-draggable-flatlist（長押しドラッグ&ドロップ）
 
 ## よく使うコマンド
 
@@ -73,7 +74,7 @@ eas build --platform android --profile preview  # APKビルド
 - 背景: `#091b36`（ダークネイビー）
 - カード: `#0d2847`（ネイビーサーフェス）+ `Overlays.cardBorder`
 - アクセント: `#D4A056`（ウォームゴールド）
-- テキスト: `#FFFFFF` / サブテキスト: `#8BA3C4`
+- テキスト: `#FFFFFF` / サブテキスト: `#8BA3C4` / プレースホルダー: `#4A6A8C`
 - オーバーレイ色は `constants/theme.ts` の `Overlays` 定数を使用（RGBA ハードコード禁止）
 
 ### フォント
@@ -88,7 +89,8 @@ eas build --platform android --profile preview  # APKビルド
 - **ErrorBanner** (`components/ErrorBanner.tsx`): エラーメッセージ表示。全画面で統一使用
 - **Header** (`components/Header.tsx`): オプション `onBack` で戻る矢印を表示
 - **Button** (`components/Button.tsx`): `primary` / `secondary` / `danger` の3バリアント
-- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` 時にパスワード表示切替アイコン付き
+- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` 時にパスワード表示切替アイコン付き。プレースホルダーは `Colors.placeholder` で薄く表示
+- **CredentialCard** (`components/CredentialCard.tsx`): `drag`/`isActive` props でドラッグ対応。アカウントID未設定時はサブテキスト非表示
 
 ### NativeWind × style の注意
 
@@ -124,7 +126,7 @@ eas build --platform android --profile preview  # APKビルド
 
 ## レイアウト構成
 
-- `app/_layout.tsx` で `SafeAreaProvider` + フォント読み込み + `StatusBar`（style="light"）をルートに配置
+- `app/_layout.tsx` で `GestureHandlerRootView` + `SafeAreaProvider` + フォント読み込み + `StatusBar`（style="light"）をルートに配置
 - フォント読み込み完了まではローディング表示（`fontsLoaded` チェック）
 - 各画面で `useSafeAreaInsets()` を使い、ノッチ・ステータスバー領域を動的に回避
 - ローディング画面にも `SafeAreaProvider` を適用（早期リターン時の表示崩れ防止）
@@ -133,11 +135,11 @@ eas build --platform android --profile preview  # APKビルド
 ## ナビゲーション構成
 
 ```
-app/_layout.tsx          → SafeAreaProvider + Font + AuthContext + Slot
+app/_layout.tsx          → GestureHandlerRootView + SafeAreaProvider + Font + AuthContext + Slot
 ├── sign-in.tsx          → 未認証用（ルート直下）
 └── (auth)/_layout.tsx   → 認証ガード + Stack
     ├── (tabs)/_layout.tsx → Tabs（ホーム / 共有 / 設定）
-    │   ├── index.tsx      → ホーム一覧（FlatList + 検索 + FAB）
+    │   ├── index.tsx      → ホーム一覧（DraggableFlatList + 検索 + FAB）
     │   ├── share.tsx      → 家族共有設定
     │   └── settings.tsx   → 設定（ログアウト・バージョン）
     ├── add.tsx            → 新規登録（Stack push、タブ非表示）

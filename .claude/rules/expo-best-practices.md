@@ -25,17 +25,20 @@ export default function RootLayout() {
     );
   }
   return (
-    <SafeAreaProvider>
-      <StatusBar style="light" />
-      <AuthContext.Provider value={auth}>
-        <Slot />
-      </AuthContext.Provider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar style="light" />
+        <AuthContext.Provider value={auth}>
+          <Slot />
+        </AuthContext.Provider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 ```
 
-- `SafeAreaProvider` は最外層に配置（ローディング画面含む全パスで必要）
+- `GestureHandlerRootView` は最外層に配置（`react-native-draggable-flatlist` に必須、`style={{ flex: 1 }}` を忘れないこと）
+- `SafeAreaProvider` はその内側に配置（ローディング画面含む全パスで必要）
 - `StatusBar` は背景色 `#091b36` に合わせて `style="light"`
 - フォント読み込み（`useFonts`）完了までローディング表示
 - `Text.render` パッチでグローバルフォント適用（フォント読み込み前に実行）
@@ -119,6 +122,8 @@ if (isLoggedIn) return <Redirect href="/" />;
 - `expo-image` を使用（RNの `Image` より高速、キャッシュ内蔵）
 - `react-native-reanimated` v4 でUIスレッドアニメーション
 - FlatList の `keyExtractor`, `getItemLayout` を適切に設定してリスト性能を確保
+- ホーム一覧は `DraggableFlatList`（`react-native-draggable-flatlist`）で長押しドラッグ並び替え対応。検索中は通常 `FlatList` にフォールバック
+- `credentials` テーブルの `display_order` カラムで並び順を永続化（`display_order ASC` でソート、新規作成は `display_order: 0` でリスト先頭）
 - `newArchEnabled: true`（有効化済み）で新アーキテクチャの恩恵を受ける
 
 ## コーディング規約（React Best Practices 準拠）

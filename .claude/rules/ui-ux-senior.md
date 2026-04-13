@@ -45,6 +45,7 @@ paths:
 | ボーダー | `#1A3556` |
 | 入力ボーダー | `#2A4A6E` |
 | 入力フォーカス | `#D4A056`（ゴールド） |
+| プレースホルダー | `#4A6A8C`（薄めブルーグレー） |
 | タブバー | `#061527`（ディープネイビー） |
 | 危険（削除等） | `#FF6B6B` |
 | 成功 | `#51CF66` |
@@ -68,7 +69,8 @@ RGBA のハードコード禁止。`constants/theme.ts` の `Overlays` を使用
 
 - **ErrorBanner** (`components/ErrorBanner.tsx`): エラーメッセージ表示。個別にスタイルを書かず必ずこれを使う
 - **Header** (`components/Header.tsx`): `onBack` プロパティで戻る矢印を表示。Stack push 画面の閲覧モードで使用
-- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` で自動的にパスワード表示切替アイコンが付く
+- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` で自動的にパスワード表示切替アイコンが付く。プレースホルダーは `Colors.placeholder`（`Colors.subtext` より薄い）を使用し、入力済みテキストと明確に区別
+- **CredentialCard** (`components/CredentialCard.tsx`): `drag`/`isActive` props でドラッグ&ドロップ並び替え対応。ドラッグハンドル（`reorder-three` アイコン）を左側に表示。アカウントID未設定時はサブテキスト行を非表示（「IDなし」等のネガティブ表現を避ける）
 
 ## ボタンスタイル
 
