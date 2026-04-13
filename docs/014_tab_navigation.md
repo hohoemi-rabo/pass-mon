@@ -1,4 +1,4 @@
-# 014: タブナビゲーション拡張 — 4タブ構成
+# 014: タブナビゲーション拡張 — 4タブ構成 [DONE]
 
 > Phase 2 | あんしんメモ機能
 
@@ -9,8 +9,8 @@ Stack にメモ用ルート（memo/add、memo/[id]）を登録する。
 
 ## TODO
 
-- [ ] `app/(auth)/(tabs)/_layout.tsx` に「あんしんメモ」タブ追加（ホームと共有の間）
-- [ ] `app/(auth)/_layout.tsx` に `memo/add` と `memo/[id]` の Stack.Screen 追加
+- [x] `app/(auth)/(tabs)/_layout.tsx` に「あんしんメモ」タブ追加（ホームと共有の間）
+- [x] `app/(auth)/_layout.tsx` に `memo/add` と `memo/[id]` の Stack.Screen 追加
 
 ## タブ構成（変更後）
 

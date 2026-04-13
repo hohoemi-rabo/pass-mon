@@ -13,6 +13,8 @@ export default function AuthLayout() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="add" />
       <Stack.Screen name="[id]" />
+      <Stack.Screen name="memo/add" />
+      <Stack.Screen name="memo/[id]" />
     </Stack>
   );
 }

@@ -1,4 +1,4 @@
-# 010: DB設計 — anshin_memos テーブル
+# 010: DB設計 — anshin_memos テーブル [DONE]
 
 > Phase 2 | あんしんメモ機能
 
@@ -8,12 +8,12 @@
 
 ## TODO
 
-- [ ] `update_updated_at()` トリガー関数の存在確認（なければ作成）
-- [ ] `anshin_memos` テーブル作成（マイグレーション）
-- [ ] インデックス作成: `idx_anshin_memos_user_display_order`
-- [ ] `updated_at` 自動更新トリガー設定
-- [ ] RLS 有効化 + ポリシー作成（SELECT/INSERT/UPDATE/DELETE）
-- [ ] `types/database.ts` に `anshin_memos` テーブル定義を追加
+- [x] `update_updated_at()` トリガー関数の存在確認（なければ作成）
+- [x] `anshin_memos` テーブル作成（マイグレーション）
+- [x] インデックス作成: `idx_anshin_memos_user_display_order`
+- [x] `updated_at` 自動更新トリガー設定
+- [x] RLS 有効化 + ポリシー作成（SELECT/INSERT/UPDATE/DELETE）
+- [x] `types/database.ts` に `anshin_memos` テーブル定義を追加
 
 ## 詳細
 

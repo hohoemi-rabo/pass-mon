@@ -1,4 +1,4 @@
-# 011: 型定義 — あんしんメモ
+# 011: 型定義 — あんしんメモ [DONE]
 
 > Phase 2 | あんしんメモ機能
 
@@ -8,8 +8,8 @@
 
 ## TODO
 
-- [ ] `types/anshinMemo.ts` 作成（AnshinMemo / AnshinMemoSummary / AnshinMemoFormData）
-- [ ] `types/database.ts` の型と整合性確認
+- [x] `types/anshinMemo.ts` 作成（AnshinMemo / AnshinMemoSummary / AnshinMemoFormData）
+- [x] `types/database.ts` の型と整合性確認
 
 ## 型定義
 

@@ -1,4 +1,4 @@
-# 012: カスタムフック — useAnshinMemos
+# 012: カスタムフック — useAnshinMemos [DONE]
 
 > Phase 2 | あんしんメモ機能
 
@@ -9,14 +9,14 @@
 
 ## TODO
 
-- [ ] `hooks/useAnshinMemos.ts` 作成
-- [ ] `listAnshinMemos()` — 自分のメモ一覧（display_order ASC）
-- [ ] `listSharedAnshinMemos()` — 家族の共有メモ一覧
-- [ ] `getAnshinMemo(id)` — メモ詳細取得
-- [ ] `createAnshinMemo(form)` — 新規作成（display_order: 0）
-- [ ] `updateAnshinMemo(id, form)` — 更新
-- [ ] `updateAnshinMemoOrder(items)` — 並び順一括更新
-- [ ] `deleteAnshinMemo(id)` — 削除
+- [x] `hooks/useAnshinMemos.ts` 作成
+- [x] `listAnshinMemos()` — 自分のメモ一覧（display_order ASC）
+- [x] `listSharedAnshinMemos()` — 家族の共有メモ一覧
+- [x] `getAnshinMemo(id)` — メモ詳細取得
+- [x] `createAnshinMemo(form)` — 新規作成（display_order: 0）
+- [x] `updateAnshinMemo(id, form)` — 更新
+- [x] `updateAnshinMemoOrder(items)` — 並び順一括更新
+- [x] `deleteAnshinMemo(id)` — 削除
 
 ## パターン
 

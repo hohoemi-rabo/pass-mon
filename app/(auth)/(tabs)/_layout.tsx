@@ -36,6 +36,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="memos"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
         name="share"
         options={{
           title: "共有",

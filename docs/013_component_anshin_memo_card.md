@@ -1,4 +1,4 @@
-# 013: コンポーネント — AnshinMemoCard
+# 013: コンポーネント — AnshinMemoCard [DONE]
 
 > Phase 2 | あんしんメモ機能
 
@@ -9,12 +9,12 @@ CredentialCard と同じ基本構造（Card ベース + ドラッグ対応）。
 
 ## TODO
 
-- [ ] `components/AnshinMemoCard.tsx` 作成
-- [ ] heart アイコン（20px、`Colors.secondary`）でパスワードカードと視覚的に差別化
-- [ ] タイトル表示（18px bold）
-- [ ] 本文プレビュー（16px、subtext、最大2行 `numberOfLines={2}`）
-- [ ] ドラッグハンドル対応（`drag` / `isActive` props）
-- [ ] ドラッグ中の視覚フィードバック（背景 cardElevated、影増大）
+- [x] `components/AnshinMemoCard.tsx` 作成
+- [x] heart アイコン（20px、`Colors.secondary`）でパスワードカードと視覚的に差別化
+- [x] タイトル表示（18px bold）
+- [x] 本文プレビュー（16px、subtext、最大2行 `numberOfLines={2}`）
+- [x] ドラッグハンドル対応（`drag` / `isActive` props）
+- [x] ドラッグ中の視覚フィードバック（背景 cardElevated、影増大）
 
 ## Props
 

@@ -1,4 +1,4 @@
-# 016: 画面 — あんしんメモ新規登録（memo/add.tsx）
+# 016: 画面 — あんしんメモ新規登録（memo/add.tsx） [DONE]
 
 > Phase 2 | あんしんメモ機能
 
@@ -8,16 +8,16 @@
 
 ## TODO
 
-- [ ] `app/(auth)/memo/add.tsx` 作成
-- [ ] ヘッダー「あんしんメモを追加」+ 戻るボタン
-- [ ] タイトル入力（TextInput、label: "タイトル"、placeholder: "例：通帳の場所"）
-- [ ] 本文入力（TextInput、multiline、numberOfLines: 6、placeholder: "家族に伝えたいことを書いてください"）
-- [ ] 「保存する」ボタン（primary、タイトルor本文が空でdisabled）
-- [ ] 「キャンセル」ボタン（secondary）
-- [ ] バリデーション（タイトル・本文の空チェック）
-- [ ] 保存処理: `createAnshinMemo()` → 成功時 `setTimeout(() => router.back(), 50)`
-- [ ] エラー表示（ErrorBanner）
-- [ ] KeyboardAvoidingView 対応
+- [x] `app/(auth)/memo/add.tsx` 作成
+- [x] ヘッダー「あんしんメモを追加」+ 戻るボタン
+- [x] タイトル入力（TextInput、label: "タイトル"、placeholder: "例：通帳の場所"）
+- [x] 本文入力（TextInput、multiline、numberOfLines: 6、placeholder: "家族に伝えたいことを書いてください"）
+- [x] 「保存する」ボタン（primary、タイトルor本文が空でdisabled）
+- [x] 「キャンセル」ボタン（secondary）
+- [x] バリデーション（タイトル・本文の空チェック）
+- [x] 保存処理: `createAnshinMemo()` → 成功時 `setTimeout(() => router.back(), 50)`
+- [x] エラー表示（ErrorBanner）
+- [x] KeyboardAvoidingView 対応
 
 ### 参照
 
