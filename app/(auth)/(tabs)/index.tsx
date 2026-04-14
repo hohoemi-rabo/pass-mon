@@ -127,6 +127,7 @@ export default function Index() {
         />
       </View>
 
+      <View style={{ flex: 1, minHeight: 0 }}>
       {activeSegment === 0 ? (
         <CredentialList
           credentials={credentials}
@@ -190,6 +191,7 @@ export default function Index() {
           router={router}
         />
       )}
+      </View>
 
       {loadError ? (
         <View className="absolute bottom-24 left-4 right-4">
@@ -272,6 +274,7 @@ function CredentialList({
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
+        style={{ flex: 1 }}
         getItemLayout={(_, index) => ({
           length: CARD_HEIGHT + CARD_GAP,
           offset: (CARD_HEIGHT + CARD_GAP) * index,
@@ -306,6 +309,8 @@ function CredentialList({
       data={filtered}
       keyExtractor={(item) => item.id}
       onDragEnd={({ data }) => onDragEnd(data)}
+      containerStyle={{ flex: 1 }}
+      style={{ flex: 1 }}
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingBottom: 100,
@@ -386,6 +391,7 @@ function MemoList({
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
+        style={{ flex: 1 }}
         contentContainerStyle={{
           paddingHorizontal: 16,
           paddingBottom: 100,
@@ -395,7 +401,7 @@ function MemoList({
         renderItem={({ item }) => (
           <AnshinMemoCard
             title={item.title}
-      
+
             onPress={() => router.push(`/memo/${item.id}`)}
           />
         )}
@@ -415,6 +421,8 @@ function MemoList({
       data={filtered}
       keyExtractor={(item) => item.id}
       onDragEnd={({ data }) => onDragEnd(data)}
+      containerStyle={{ flex: 1 }}
+      style={{ flex: 1 }}
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingBottom: 100,
