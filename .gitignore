@@ -37,6 +37,9 @@ yarn-error.*
 # MCP config
 .mcp.json
 
+# Claude Code
+.claude/scheduled_tasks.lock
+
 # typescript
 *.tsbuildinfo
 
