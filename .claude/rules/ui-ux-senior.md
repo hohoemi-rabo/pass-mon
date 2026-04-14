@@ -69,7 +69,7 @@ RGBA のハードコード禁止。`constants/theme.ts` の `Overlays` を使用
 
 - **ErrorBanner** (`components/ErrorBanner.tsx`): エラーメッセージ表示。個別にスタイルを書かず必ずこれを使う
 - **Header** (`components/Header.tsx`): `onBack` プロパティで戻る矢印を表示。Stack push 画面の閲覧モードで使用
-- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` で自動的にパスワード表示切替アイコンが付く。プレースホルダーは `Colors.placeholder`（`Colors.subtext` より薄い）を使用し、入力済みテキストと明確に区別
+- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` で自動的にパスワード表示切替アイコンが付く。プレースホルダーは `Colors.placeholder`（`Colors.subtext` より薄い）を使用し、入力済みテキストと明確に区別。パスワード登録・編集画面では `secureTextEntry` を使わず常に入力内容を表示（ログイン用ではなく管理アプリのため視認性を優先）
 - **CredentialCard** (`components/CredentialCard.tsx`): `drag`/`isActive` props でドラッグ&ドロップ並び替え対応。ドラッグハンドル（`reorder-three` アイコン）を左側に表示。アカウントID未設定時はサブテキスト行を非表示（「IDなし」等のネガティブ表現を避ける）
 - **AnshinMemoCard** (`components/AnshinMemoCard.tsx`): タイトルのみ表示（本文は暗号化のため一覧非表示）。heart アイコン（`Colors.secondary`）でパスワードカードと視覚的に差別化。ドラッグ対応
 - **SegmentControl** (`components/SegmentControl.tsx`): ホーム画面のパスワード/あんしんメモ切替。ゴールドのアクティブインジケーター。タップ領域44dp以上

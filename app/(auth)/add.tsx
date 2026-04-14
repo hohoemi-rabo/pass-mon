@@ -106,9 +106,7 @@ export default function AddCredential() {
             placeholder="パスワードを入力"
             value={form.password}
             onChangeText={(v) => updateField("password", v)}
-            secureTextEntry
             autoCapitalize="none"
-            autoComplete="password"
           />
 
           <TextInput

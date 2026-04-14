@@ -375,9 +375,7 @@ function EditMode({
         placeholder="パスワードを入力"
         value={form.password}
         onChangeText={(v) => onUpdateField("password", v)}
-        secureTextEntry
         autoCapitalize="none"
-        autoComplete="password"
       />
 
       <TextInput

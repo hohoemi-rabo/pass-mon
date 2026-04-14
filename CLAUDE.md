@@ -90,7 +90,7 @@ npx expo export --platform web                  # Web静的エクスポート（
 - **ErrorBanner** (`components/ErrorBanner.tsx`): エラーメッセージ表示。全画面で統一使用
 - **Header** (`components/Header.tsx`): オプション `onBack` で戻る矢印を表示
 - **Button** (`components/Button.tsx`): `primary` / `secondary` / `danger` の3バリアント
-- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` 時にパスワード表示切替アイコン付き。プレースホルダーは `Colors.placeholder` で薄く表示
+- **TextInput** (`components/TextInput.tsx`): `secureTextEntry` 時にパスワード表示切替アイコン付き。プレースホルダーは `Colors.placeholder` で薄く表示。パスワード登録・編集画面では `secureTextEntry` を使わず常に入力内容を表示（ログイン用ではないため）
 - **CredentialCard** (`components/CredentialCard.tsx`): `drag`/`isActive` props でドラッグ対応。アカウントID未設定時はサブテキスト非表示
 - **AnshinMemoCard** (`components/AnshinMemoCard.tsx`): タイトルのみ表示（本文は暗号化のため一覧では非表示）。heart アイコンで視覚的に差別化
 - **SegmentControl** (`components/SegmentControl.tsx`): ホーム画面のパスワード/あんしんメモ切替用セグメントコントロール
@@ -112,6 +112,7 @@ npx expo export --platform web                  # Web静的エクスポート（
 - `shadow*` スタイルプロパティは RN Web で非推奨 → `boxShadow` CSS shorthand を使用
 - `edgeToEdgeEnabled: true`（Android）→ タブバー・コンテンツで SafeArea insets を適用必須
 - `softwareKeyboardLayoutMode: "pan"`（Android）→ キーボード表示時にコンテンツをパン
+- `DraggableFlatList` の Web スクロール: `containerStyle={{ flex: 1 }}` + `style={{ flex: 1 }}` が必須（内部の `Animated.View` コンテナに高さ制約を与えるため）。リスト親要素にも `minHeight: 0` を設定
 
 ## ナビゲーションの注意
 
