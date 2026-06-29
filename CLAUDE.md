@@ -164,8 +164,15 @@ app/_layout.tsx          → GestureHandlerRootView + SafeAreaProvider + Font + 
 - `vercel.json` で SPA リライト設定済み（全ルートを `/index.html` にリライト）
 - ビルドコマンド: `npx expo export --platform web`、出力: `dist`
 - 環境変数: `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY` を Vercel に設定
+- `CRON_SECRET`: keepalive 用 Vercel Cron の認証シークレット（`openssl rand -hex 32` で生成し Vercel に登録）
 - Supabase Redirect URL と Google OAuth に Vercel ドメインを追加済み
 - GitHub プッシュで自動デプロイ
+
+### Supabase keepalive（スリープ防止）
+
+- `api/keepalive.ts`: Vercel Serverless Function（Expo の Web エクスポートと併存）
+- Supabase 無料プランは約7日 DB 無アクティビティで自動停止 → `vercel.json` の Cron で 1 日 1 回（`0 3 * * *`）呼び出し、`profiles` へ軽量カウントクエリを投げて防止
+- 認証: Vercel Cron が自動付与する `Authorization: Bearer ${CRON_SECRET}` を検証（不一致は 401）
 
 ## 現在の状態
 
